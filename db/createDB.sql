@@ -1,0 +1,2 @@
+DROP DATABASE IF EXISTS henotes;
+CREATE DATABASE henotes;

@@ -1,0 +1,21 @@
+{
+  "name": "kf-notes-be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cdb": "psql -f ./db/createDB.sql > res.txt",
+    "start": "nodemon ./listen.js",
+    "seed": "node ./db/seeds/seed-db.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^14.1.0",
+    "express": "^4.17.2",
+    "pg": "^8.7.1",
+    "pg-format": "^1.0.4"
+  }
+}
