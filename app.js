@@ -1,11 +1,13 @@
 const express = require("express");
+const { customError } = require("./errors/errors");
+const playersRouter = require("./routes/players");
 
 const app = express();
 
 app.use(express.json());
 
-app.get("/", (req, res, next) => {
-  res.status(200).sendFile(`${__dirname}/views/index.html`);
-});
+app.use("/players", playersRouter);
+
+app.use(customError);
 
 module.exports = app;

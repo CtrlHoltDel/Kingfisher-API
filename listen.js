@@ -1,11 +1,11 @@
-const app = require("./app")
+const app = require("./app");
 
-const PORT = 3000
+const PORT = 3000;
 
 app.listen(PORT, (error) => {
-    if(error){
-        console.log(error)
-        return
-    }
-    console.log(`Connected at port ${PORT}`)
-})
+  if (error) {
+    console.log(error);
+    return;
+  }
+  console.log(`Connected at port ${PORT}`);
+});

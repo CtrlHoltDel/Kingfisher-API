@@ -9,27 +9,29 @@ const dropTables = async () => {
 
 const createTables = async () => {
   const players = `CREATE TABLE players (
-        player_id SERIAL PRIMARY KEY,
-        player_name VARCHAR(100),
-        type VARCHAR(50),
+        player_name VARCHAR(100) PRIMARY KEY,
+        type VARCHAR,
         created_at TIMESTAMP DEFAULT NOW()
-        );`;
+      );`;
 
   const notes = `CREATE TABLE notes(
-            note_id SERIAL PRIMARY KEY, 
-            player_id INT NOT NULL REFERENCES players(player_id),
-            created_at TIMESTAMP DEFAULT NOW()
-            );`;
+            note_id SERIAL PRIMARY KEY,
+            player_name VARCHAR NOT NULL REFERENCES players(player_name),
+            created_at TIMESTAMP DEFAULT NOW(),
+            note VARCHAR,
+            created_by VARCHAR
+          );`;
 
   const tendencies = `CREATE TABLE tendencies(
-                player_id INT NOT NULL REFERENCES players(player_id),
-                tendencies VARCHAR
-                );`;
+                player_name VARCHAR NOT NULL REFERENCES players(player_name),
+                tendency VARCHAR,
+                created_at TIMESTAMP DEFAULT NOW(),
+                created_by VARCHAR
+              );`;
 
-  const tables = [players, notes, tendencies];
-  for (let i = 0; i < tables.length; i++) {
-    await db.query(tables[i]);
-  }
+  await db.query(players);
+  await db.query(notes);
+  await db.query(tendencies);
 };
 
 module.exports = { dropTables, createTables };

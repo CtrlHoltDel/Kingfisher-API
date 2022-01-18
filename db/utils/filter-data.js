@@ -24,6 +24,9 @@ const filterData = (allInfo) => {
       (item) => item.name === name
     );
     if (formattedPlayers[indexInFinal]) {
+      formattedPlayers[indexInFinal].type =
+        SUMMARY && typeof SUMMARY === "string" ? SUMMARY.toLowerCase() : null;
+
       if (formattedPlayers[indexInFinal].tendencies) {
         if (TENDENCIES !== "")
           formattedPlayers[indexInFinal].tendencies.push(TENDENCIES);
@@ -31,9 +34,6 @@ const filterData = (allInfo) => {
         formattedPlayers[indexInFinal].tendencies =
           TENDENCIES === "" ? [] : [TENDENCIES];
       }
-
-      formattedPlayers[indexInFinal].type =
-        SUMMARY && typeof SUMMARY === "string" ? SUMMARY.toLowerCase() : null;
 
       if (formattedPlayers[indexInFinal].notes) {
         formattedPlayers[indexInFinal].notes.push(NOTES);
@@ -44,7 +44,7 @@ const filterData = (allInfo) => {
   });
 
   const players = formattedPlayers.map(({ name, aliases, type }) => {
-    return { name, aliases, type };
+    return { name, type };
   });
 
   const notes = [];
