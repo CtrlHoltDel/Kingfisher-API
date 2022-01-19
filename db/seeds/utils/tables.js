@@ -23,6 +23,7 @@ const createTables = async () => {
           );`;
 
   const tendencies = `CREATE TABLE tendencies(
+                tendency_id SERIAL PRIMARY KEY,
                 player_name VARCHAR NOT NULL REFERENCES players(player_name),
                 tendency VARCHAR,
                 created_at TIMESTAMP DEFAULT NOW(),

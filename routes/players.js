@@ -1,6 +1,5 @@
-const { getPlayers } = require("../controllers/players");
-
 const playersRouter = require("express").Router();
+const { getPlayers } = require("../controllers/players");
 
 playersRouter.get("/", getPlayers);
 

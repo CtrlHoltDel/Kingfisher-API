@@ -43,7 +43,7 @@ const filterData = (allInfo) => {
     }
   });
 
-  const players = formattedPlayers.map(({ name, aliases, type }) => {
+  const players = formattedPlayers.map(({ name, type }) => {
     return { name, type };
   });
 

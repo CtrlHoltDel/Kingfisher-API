@@ -1,4 +1,5 @@
 const { fetchPlayers } = require("../models/players");
+const { allItems } = require("../utils/db");
 
 exports.getPlayers = async (req, res, next) => {
   try {
