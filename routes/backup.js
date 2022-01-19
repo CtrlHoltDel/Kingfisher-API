@@ -13,7 +13,7 @@ backupRouter.get("/:filename", async (req, res, next) => {
   try {
     await generateBackups();
     res.sendFile(
-      `${__dirname.slice(0, -7)}/backu/${req.params.filename}`,
+      `${__dirname.slice(0, -7)}/backup/${req.params.filename}`,
       (err) => {
         if (err) {
           res.status(404).send(`No file found`);
