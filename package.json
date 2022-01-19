@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "cdb": "psql -f ./db/createDB.sql > res.txt",
     "start": "node ./listen.js",
-    "seed": "node ./db/seeds/seed-db.js"
+    "seed": "node ./db/seeds/seed-db.js",
+    "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed"
   },
   "keywords": [],
   "author": "",
