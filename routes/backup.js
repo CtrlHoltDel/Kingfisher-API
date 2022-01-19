@@ -10,18 +10,21 @@ backupRouter.get("/:filename", async (req, res, next) => {
     return;
   }
 
-  await generateBackups();
-
-  res.sendFile(
-    `${__dirname.slice(0, -7)}/backup/${req.params.filename}`,
-    (err) => {
-      if (err) {
-        res.status(404).send(`No file found`);
-      } else {
-        res.status(200);
+  try {
+    await generateBackups();
+    res.sendFile(
+      `${__dirname.slice(0, -7)}/backup/${req.params.filename}`,
+      (err) => {
+        if (err) {
+          res.status(404).send(`No file found`);
+        } else {
+          res.status(200);
+        }
       }
-    }
-  );
+    );
+  } catch (error) {
+    next(err);
+  }
 });
 
 module.exports = backupRouter;
