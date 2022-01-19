@@ -1,2 +1,4 @@
 DROP DATABASE IF EXISTS henotes;
 CREATE DATABASE henotes;
+DROP DATABASE IF EXISTS henotes_test;
+CREATE DATABASE henotes_test;

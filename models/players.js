@@ -1,10 +1,17 @@
 const db = require("../db/connection");
+const { getCount } = require("../utils/db");
+const validation = require("../utils/validation");
 
 exports.fetchPlayers = async ({ limit = 10, p = 1 }) => {
-  if (!Number(limit) || !Number(p))
-    return Promise.reject({ status: 404, message: "invalid query" });
+  await validation.limitPage(limit, p);
+  const { count } = await getCount("players");
 
-  const { rows } = await db.query(`SELECT * FROM players`);
+  const query = `SELECT * FROM players
+                 ORDER BY created_at DESC
+                 LIMIT ${limit} OFFSET ${p * limit - limit};
+                `;
 
-  return rows;
+  const { rows: players } = await db.query(query);
+
+  return { count: +count, players };
 };

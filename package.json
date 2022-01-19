@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --watch",
     "cdb": "psql -f ./db/createDB.sql > res.txt",
     "start": "node ./listen.js",
     "seed": "node ./db/seeds/seed-db.js",
@@ -18,5 +18,9 @@
     "express": "^4.17.2",
     "pg": "^8.7.1",
     "pg-format": "^1.0.4"
+  },
+  "devDependencies": {
+    "jest": "^27.4.7",
+    "supertest": "^6.2.2"
   }
 }

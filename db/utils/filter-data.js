@@ -1,9 +1,13 @@
 const { oldPlayers } = require("../data/old/old-players");
 const fs = require("fs/promises");
 
-const filterData = (allInfo) => {
+const config = {
+  playerHeader: "\\",
+};
+
+const filterData = async (allInfo, { playerHeader }) => {
   const playerNames = allInfo.map((player, index) => {
-    if (player["\\"].length === 1) {
+    if (player[playerHeader].length === 1) {
       return;
     }
     return player["\\"].toLowerCase();
@@ -70,34 +74,40 @@ const filterData = (allInfo) => {
     });
   });
 
-  fs.writeFile(
-    "./db/data/all.js",
-    `exports.allPlayers = ${JSON.stringify(formattedPlayers)}`
-  )
-    .then(async () => {
-      console.log(`all.js created`);
-      await fs.writeFile(
-        "./db/data/players.js",
-        `exports.players = ${JSON.stringify(players)}`
-      );
-    })
-    .then(async () => {
-      console.log(`players.js created`);
-      await fs.writeFile(
-        "./db/data/notes.js",
-        `exports.notes = ${JSON.stringify(notes)}`
-      );
-    })
-    .then(async () => {
-      console.log(`notes.js created`);
-      await fs.writeFile(
-        "./db/data/tendencies.js",
-        `exports.tendencies = ${JSON.stringify(tendencies)}`
-      );
-    })
-    .catch((err) => {
-      throw err;
-    });
+  try {
+    await fs.writeFile(
+      "./db/data/all.js",
+      `exports.allPlayers = ${JSON.stringify(formattedPlayers)}`
+    );
+
+    console.log(`all.js created`);
+    await fs.writeFile(
+      "./db/data/players.js",
+      `exports.players = ${JSON.stringify(players)}`
+    );
+
+    console.log(`players.js created`);
+    await fs.writeFile(
+      "./db/data/notes.js",
+      `exports.notes = ${JSON.stringify(notes)}`
+    );
+
+    console.log(`notes.js created`);
+    await fs.writeFile(
+      "./db/data/tendencies.js",
+      `exports.tendencies = ${JSON.stringify(tendencies)}`
+    );
+
+    await fs.writeFile(
+      "./db/data/index.js",
+      `exports.notes = require("./notes");
+        exports.tendencies = require("./tendencies");
+        exports.players = require("./players");
+    `
+    );
+  } catch (err) {
+    throw err;
+  }
 };
 
-filterData(oldPlayers);
+filterData(oldPlayers, config);

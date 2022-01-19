@@ -11,7 +11,11 @@ exports.fillTables = async (data) => {
   const playersQuery = format(
     "INSERT INTO players (player_name, type, created_at) VALUES %L",
     players.players.map((player) => {
-      return [player.name, player.type, new Date(1642502115903)];
+      return [
+        player.name,
+        player.type,
+        player.created_at ? player.created_at : new Date(1642502115903),
+      ];
     })
   );
 
