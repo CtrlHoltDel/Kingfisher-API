@@ -44,7 +44,7 @@ exports.generateBackups = async () => {
 
   const directory = `${__dirname.slice(0, -6)}`;
 
-  await fs.rm(directory + "/backup", { recursive: true });
+  await fs.rm(directory + "/backup", { recursive: true, force: true });
   await fs.mkdir(directory + "/backup");
   await fs.writeFile(directory + "/backup/players.csv", playersCSVstring);
   await fs.writeFile(directory + "/backup/notes.csv", notesCSVstring);
