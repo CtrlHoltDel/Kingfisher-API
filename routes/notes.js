@@ -1,8 +1,13 @@
-const { getNotes, getNotesByPlayer } = require("../controllers/notes");
+const {
+  getNotes,
+  getNotesByPlayer,
+  postNote,
+  delNote,
+} = require("../controllers/notes");
 
 const notesRouter = require("express").Router();
 
-notesRouter.get("/", getNotes);
-notesRouter.get("/:player", getNotesByPlayer);
+notesRouter.route("/").get(getNotes).delete(delNote);
+notesRouter.route("/:player").get(getNotesByPlayer).post(postNote);
 
 module.exports = notesRouter;

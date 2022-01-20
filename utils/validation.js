@@ -5,3 +5,8 @@ exports.limitPage = (limit, p) => {
       message: "Limit/Page must be a non-decimal integer",
     });
 };
+
+exports.id = (id) => {
+  if (!Number(id) || id % 1 !== 0)
+    return Promise.reject({ status: 400, message: "Invalid id" });
+};

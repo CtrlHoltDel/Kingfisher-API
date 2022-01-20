@@ -6,8 +6,12 @@ exports.allItems = async (database) => {
   return rows;
 };
 
-exports.getCount = async (database) => {
-  const { rows } = await db.query(format(`SELECT COUNT(*) FROM %I;`, database));
+exports.getCount = async (database, search = "%%") => {
+  const { rows } = await db.query(
+    format(`SELECT COUNT(*) FROM %I WHERE player_name iLIKE $1;`, database),
+    [`%${search}%`]
+  );
+
   return rows[0];
 };
 
@@ -17,6 +21,13 @@ exports.checkPlayer = async (player_name) => {
     [player_name]
   );
 
-  if (!rows.length)
-    return Promise.reject({ status: 404, message: "Non-existent user" });
+  return !rows.length;
+};
+
+exports.checkNote = async (id) => {
+  const { rows } = await db.query(`SELECT * FROM notes WHERE note_id = $1`, [
+    id,
+  ]);
+
+  return !rows.length;
 };
