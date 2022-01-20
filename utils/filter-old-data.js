@@ -1,4 +1,4 @@
-const { oldPlayers } = require("../data/old/old-players");
+const { oldPlayers } = require("../db/data/old/old-players");
 const fs = require("fs/promises");
 
 const config = {
@@ -76,35 +76,38 @@ const filterData = async (allInfo, { playerHeader }) => {
 
   try {
     await fs.writeFile(
-      "./db/data/all.js",
+      `${__dirname.slice(0, -6)}/db/data/all.js`,
       `exports.allPlayers = ${JSON.stringify(formattedPlayers)}`
     );
 
     console.log(`all.js created`);
     await fs.writeFile(
-      "./db/data/players.js",
+      `${__dirname.slice(0, -6)}/db/data/players.js`,
       `exports.players = ${JSON.stringify(players)}`
     );
 
     console.log(`players.js created`);
     await fs.writeFile(
-      "./db/data/notes.js",
+      `${__dirname.slice(0, -6)}/db/data/notes.js`,
       `exports.notes = ${JSON.stringify(notes)}`
     );
 
     console.log(`notes.js created`);
     await fs.writeFile(
-      "./db/data/tendencies.js",
+      `${__dirname.slice(0, -6)}/db/data/tendencies.js`,
       `exports.tendencies = ${JSON.stringify(tendencies)}`
     );
 
+    console.log("tendendies.js created");
     await fs.writeFile(
-      "./db/data/index.js",
+      `${__dirname.slice(0, -6)}/db/data/index.js`,
       `exports.notes = require("./notes");
         exports.tendencies = require("./tendencies");
         exports.players = require("./players");
     `
     );
+
+    console.log("index created");
   } catch (err) {
     throw err;
   }

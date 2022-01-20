@@ -1,4 +1,6 @@
 const express = require("express");
+const cors = require("cors");
+
 const { customError } = require("./errors/errors");
 
 const backupRouter = require("./routes/backup");
@@ -7,6 +9,7 @@ const playersRouter = require("./routes/players");
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res, next) => {
