@@ -29,11 +29,10 @@ describe("/players", () => {
 
       expect(body.exactMatch).toBe(null);
     });
-    it.only("200: Passes back an exact match as well as fuzzy", async () => {
+    it("200: Passes back an exact match as well as fuzzy", async () => {
       const { body } = await request(app)
         .get("/players?search=blue")
         .expect(200);
-      console.log(body);
 
       expect(body.count).toBe(3);
       expect(body.players).toHaveLength(3);

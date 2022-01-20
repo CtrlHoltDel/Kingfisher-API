@@ -9,9 +9,17 @@ const app = express();
 
 app.use(express.json());
 
+app.get("/", (req, res, next) => {
+  res.status(200).sendFile(`${__dirname}/index.json`);
+});
+
 app.use("/players", playersRouter);
 app.use("/notes", notesRouter);
 app.use("/backup", backupRouter);
+
+app.get("/*", (req, res, next) => {
+  res.redirect("/");
+});
 
 app.use(customError);
 

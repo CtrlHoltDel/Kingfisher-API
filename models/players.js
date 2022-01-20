@@ -23,12 +23,10 @@ exports.fetchPlayers = async ({ limit = 10, p = 1, search = "%%" }) => {
 
   const { rows: players } = await db.query(query, [`%${search}%`]);
 
-  console.log(players);
-
   return {
     count: +count,
     players,
-    exactMatch: !exactMatch.length ? null : exactMatch[0],
+    exactMatch: !exactMatch || exactMatch.length === 0 ? null : exactMatch[0],
   };
 };
 

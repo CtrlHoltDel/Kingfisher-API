@@ -9,7 +9,6 @@ exports.getPlayers = async (req, res, next) => {
     const players = await fetchPlayers(req.query);
     res.status(200).send(players);
   } catch (err) {
-    console.log(err);
     next(err);
   }
 };
