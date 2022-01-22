@@ -14,6 +14,7 @@ exports.getCSV = async (req, res, next) => {
     await fetchCSV(req.params.file);
     res.sendFile(`${__dirname.slice(0, -12)}/backup/${req.params.file}`);
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
