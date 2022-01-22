@@ -20,9 +20,9 @@ app.use("/players", playersRouter);
 app.use("/notes", notesRouter);
 app.use("/backup", backupRouter);
 
-app.get("/*", (req, res, next) => {
-  res.redirect("/");
-});
+// app.get("/*", (req, res, next) => {
+//   res.redirect("/");
+// });
 
 app.use(customError);
 

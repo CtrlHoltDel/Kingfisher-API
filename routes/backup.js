@@ -1,11 +1,8 @@
-const { getBackup } = require("../controllers/backup");
-const { generateCSV } = require("../utils/generateCSV");
+const { getJSON, getCSV } = require("../controllers/backup");
 
 const backupRouter = require("express").Router();
 
-backupRouter.get("/", getBackup);
-backupRouter.get("/csv", async (req, res, next) => {
-  res.send(200);
-});
+backupRouter.get("/", getJSON);
+backupRouter.get("/csv/:file", getCSV);
 
 module.exports = backupRouter;
