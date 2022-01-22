@@ -8,7 +8,9 @@
     "cdb": "psql -f ./db/createDB.sql",
     "start": "node ./listen.js",
     "seed": "node ./db/seeds/seed-db.js",
-    "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed"
+    "update": "node ./db/tools/updateData.js",
+    "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed",
+    "seed:update": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run update"
   },
   "keywords": [],
   "author": "",

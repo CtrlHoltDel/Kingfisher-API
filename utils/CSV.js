@@ -10,7 +10,7 @@ exports.generateCSV = async (type, data) => {
       (total, { note_id, player_name, n_created_at, n_created_by, note }) => {
         return (total += `${note_id}, ${player_name}, ${n_created_at}, ${n_created_by}, ${note}\n`);
       },
-      "note_id, played_name, n_created_at, n_created_by, note\n"
+      "note_id, player_name, n_created_at, n_created_by, note\n"
     );
   }
 
@@ -22,7 +22,7 @@ exports.generateCSV = async (type, data) => {
       ) => {
         return (total += `${tendency_id}, ${player_name}, ${t_created_at}, ${t_created_by}, ${tendency}\n`);
       },
-      "tendency_id, player_name, tendency, t_created_at, t_created_by\n"
+      "tendency_id, player_name, t_created_at, t_created_by, tendency\n"
     );
   }
 };

@@ -1,4 +1,7 @@
 .env*
 node_modules
-*.csv
 data
+
+notes.json
+players.json
+tendencies.json
