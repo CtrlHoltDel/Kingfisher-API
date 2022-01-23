@@ -62,3 +62,20 @@ exports.insertPlayer = async ({ player_name, type = null }) => {
 
   return { player };
 };
+
+exports.amendType = async ({ player }, { type }) => {
+  if (await checkPlayer(player))
+    return Promise.reject({ status: 404, message: "Non-existent user" });
+
+  if (!type)
+    return Promise.reject({ status: 400, message: "Type key required" });
+
+  if (typeof type !== "string")
+    return Promise.reject({ status: 400, message: "Type must be a string" });
+
+  const query = `UPDATE players SET type = $1 WHERE player_name = $2 RETURNING *`;
+
+  const { rows } = await db.query(query, [type, player]);
+
+  return { player: rows[0] };
+};

@@ -1,9 +1,18 @@
-const { fetchTendenciesByPlayer } = require("../models/tendencies");
+const { removeTendency, amendTendency } = require("../models/tendencies");
 
-exports.getTendenciesByPlayer = async (req, res, next) => {
+exports.delTendency = async (req, res, next) => {
   try {
-    const result = await fetchTendenciesByPlayer(req.player);
-    res.status(200).send(result);
+    await removeTendency(req.params);
+    res.sendStatus(204);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.patchTendency = async (req, res, next) => {
+  try {
+    const tendency = await amendTendency(req.params, req.body);
+    res.status(201).send(tendency);
   } catch (err) {
     next(err);
   }

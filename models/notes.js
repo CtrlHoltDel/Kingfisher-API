@@ -41,11 +41,23 @@ exports.insertNote = async ({ created_by, note }, { player }) => {
   return rows[0];
 };
 
-exports.removeNote = async ({ id }) => {
+exports.removeNote = async (id) => {
   await validation.id(id);
   if (await checkNote(id))
     return Promise.reject({ status: 404, message: "Non-existent note" });
 
   const query = `DELETE FROM notes WHERE note_id = $1`;
   await db.query(query, [id]);
+};
+
+exports.amendNote = async ({ id }, { note }) => {
+  await validation.id(id);
+  if (await checkNote(id))
+    return Promise.reject({ status: 404, message: "Non-existent note" });
+
+  const query = `UPDATE notes SET note = $1, n_created_at = $2 WHERE note_id = $3 RETURNING *`;
+
+  const { rows } = await db.query(query, [note, new Date(), id]);
+
+  return { note: rows[0] };
 };

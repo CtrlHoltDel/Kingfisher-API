@@ -31,3 +31,12 @@ exports.checkNote = async (id) => {
 
   return !rows.length;
 };
+
+exports.checkTendency = async (id) => {
+  const { rows } = await db.query(
+    `SELECT * FROM tendencies WHERE tendency_id = $1`,
+    [id]
+  );
+
+  return !rows.length;
+};

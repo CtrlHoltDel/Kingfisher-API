@@ -2,6 +2,7 @@ const {
   fetchPlayers,
   fetchPlayerInfo,
   insertPlayer,
+  amendType,
 } = require("../models/players");
 
 exports.getPlayers = async (req, res, next) => {
@@ -26,6 +27,15 @@ exports.postPlayer = async (req, res, next) => {
   try {
     const newPlayer = await insertPlayer(req.body);
     res.status(201).send(newPlayer);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.patchType = async (req, res, next) => {
+  try {
+    const player = await amendType(req.params, req.body);
+    res.status(201).send(player);
   } catch (err) {
     next(err);
   }

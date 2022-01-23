@@ -11,9 +11,9 @@ describe("/players", () => {
   describe("GET", () => {
     it("200:  Responds with players including total count", async () => {
       const { body } = await request(app).get("/players").expect(200);
-      expect(body.count).toBe(461);
+      expect(body.count).toBe(462);
       expect(body.players).toHaveLength(10);
-      expect(body.players[0].player_name).toBe("ninja warrior");
+      expect(body.players[0].player_name).toBe("(7x axe emoji)");
     });
     it("200: Works with page and limit query", async () => {
       const { body } = await request(app)
@@ -144,6 +144,48 @@ describe("/players/:player", () => {
   });
 });
 
+describe("/players/:player/type", () => {
+  describe("PATCH", () => {
+    it("400: Amends the type of a specified player ", async () => {
+      const {
+        body: { player },
+      } = await request(app)
+        .patch("/players/aakk/type")
+        .send({ type: "fish" })
+        .expect(201);
+
+      const { rows } = await db.query(
+        `SELECT * FROM players WHERE player_name = 'aakk'`
+      );
+
+      expect(player).toMatchObject({
+        player_name: "aakk",
+        type: "fish",
+        p_created_at: expect.any(String),
+      });
+      expect(rows[0].type).toBe("fish");
+    });
+    it("404: Returns an error if the user doesn't exist", async () => {
+      const { body } = await request(app)
+        .patch("/players/not_a_player/type")
+        .send({ type: "fish" })
+        .expect(404);
+      expect(body.error.message).toBe("Non-existent user");
+    });
+    it("400: Returns an error if passed an invalid body", async () => {
+      const { body: badKey } = await request(app)
+        .patch("/players/aakk/type")
+        .send({ badKey: "invalid" })
+        .expect(400);
+
+      const { body: badValue } = await request(app)
+        .patch("/players/aakk/type")
+        .send({ type: 233 })
+        .expect(400);
+    });
+  });
+});
+
 describe("/notes", () => {
   describe("GET", () => {
     it("200: Returns with notes including total note count", async () => {
@@ -178,7 +220,9 @@ describe("/notes", () => {
       );
     });
   });
+});
 
+describe("/notes/:id", () => {
   describe("DEL", () => {
     it("204: Deletes the note specified by the id", async () => {
       const { rows: pre } = await db.query(
@@ -187,7 +231,7 @@ describe("/notes", () => {
 
       expect(pre).toHaveLength(1);
 
-      await request(app).del("/notes").send({ id: 85 }).expect(204);
+      await request(app).del("/notes/85").expect(204);
 
       const { rows: post } = await db.query(
         "SELECT * FROM notes WHERE note_id = 85"
@@ -198,8 +242,8 @@ describe("/notes", () => {
 
     it("404: Returns an error if passed an id that doesn't exist yet", async () => {
       const { body } = await request(app)
-        .del("/notes")
-        .send({ id: 349498 })
+        .del("/notes/349498")
+
         .expect(404);
 
       expect(body.error.message).toBe("Non-existent note");
@@ -207,10 +251,37 @@ describe("/notes", () => {
 
     it("400: Returns an error if passed a non-intiger value", async () => {
       const { body } = await request(app)
-        .del("/notes")
-        .send({ id: "not-number" })
+        .del("/notes/not-number")
+
         .expect(400);
       expect(body.error.message).toBe("Invalid id");
+    });
+  });
+  describe("PATCH", () => {
+    it("204: Updates the note body and the date of the specified note", async () => {
+      await request(app)
+        .patch("/notes/10")
+        .send({ note: "This is the updated note for note 10" })
+        .expect(201);
+
+      const { rows } = await db.query(
+        `SELECT * FROM notes WHERE note_id = '10'`
+      );
+
+      expect(rows[0].note).toBe("This is the updated note for note 10");
+    });
+
+    it("400: Returns an error if passed an invalid id", async () => {
+      await request(app)
+        .patch("/notes/not_an_id")
+        .send({ note: "Invalid Id" })
+        .expect(400);
+    });
+    it("404: Returns an error if passed an id of a note that doesn't exist", async () => {
+      await request(app)
+        .patch("/notes/3948348")
+        .send({ note: "Invalid note id" })
+        .expect(404);
     });
   });
 });
@@ -270,6 +341,56 @@ describe("/notes/:player", () => {
         .expect(400);
 
       expect(body.error.message).toBe("Invalid body");
+    });
+  });
+});
+
+describe("/tendencies/:id", () => {
+  describe("DEL", () => {
+    it("204: Deletes the tendency at the specified id", async () => {
+      const { rows: pre } = await db.query(
+        "SELECT * FROM tendencies WHERE tendency_id = $1",
+        [4]
+      );
+      expect(pre).toHaveLength(1);
+      await request(app).delete("/tendencies/4").expect(204);
+      const { rows: post } = await db.query(
+        "SELECT * FROM tendencies WHERE tendency_id = $1",
+        [4]
+      );
+      expect(post).toHaveLength(0);
+    });
+
+    it("400: Returns an error if passed a non-integer ID", async () => {
+      await request(app).delete("/tendencies/word_not_id").expect(400);
+    });
+    it("404: Returns an error if passed an non-existent id", async () => {
+      const { body } = await request(app)
+        .delete("/tendencies/3489347")
+        .expect(404);
+
+      expect(body.error.message).toBe("Non-existent tendency");
+    });
+  });
+  describe("PATCH", () => {
+    it("204: Updates the tendency body and date of the specified tendency ", async () => {
+      await request(app)
+        .patch("/tendencies/5")
+        .send({ tendency: "Updated tendency" })
+        .expect(201);
+    });
+
+    it("400: Returns an error if passed an invalid id", async () => {
+      await request(app)
+        .patch("/tendencies/not_an_id")
+        .send({ note: "Invalid Id" })
+        .expect(400);
+    });
+    it("404: Returns an error if passed an id of a tendency that doesn't exist", async () => {
+      await request(app)
+        .patch("/tendencies/347374")
+        .send({ note: "Invalid note id" })
+        .expect(404);
     });
   });
 });

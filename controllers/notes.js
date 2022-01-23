@@ -3,6 +3,7 @@ const {
   fetchNotesByPlayer,
   insertNote,
   removeNote,
+  amendNote,
 } = require("../models/notes");
 
 exports.getNotes = async (req, res, next) => {
@@ -34,8 +35,17 @@ exports.postNote = async (req, res, next) => {
 
 exports.delNote = async (req, res, next) => {
   try {
-    await removeNote(req.body);
+    await removeNote(req.params.id);
     res.sendStatus(204);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.patchNote = async (req, res, next) => {
+  try {
+    const note = await amendNote(req.params, req.body);
+    res.status(201).send(note);
   } catch (err) {
     next(err);
   }

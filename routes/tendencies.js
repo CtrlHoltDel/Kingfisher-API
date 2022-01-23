@@ -1,6 +1,6 @@
 const tendenciesRouter = require("express").Router();
-const { getTendenciesByPlayer } = require("../controllers/tendencies");
+const { delTendency, patchTendency } = require("../controllers/tendencies");
 
-tendenciesRouter.get("/", getTendenciesByPlayer);
+tendenciesRouter.route("/:id").delete(delTendency).patch(patchTendency);
 
 module.exports = tendenciesRouter;
