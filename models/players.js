@@ -32,8 +32,8 @@ exports.fetchPlayers = async ({ limit = 10, p = 1, search = "%%" }) => {
 
 exports.fetchPlayerInfo = async ({ player }) => {
   const playerQuery = `SELECT * FROM players WHERE player_name = $1`;
-  const notesQuery = `SELECT * FROM notes WHERE player_name = $1`;
-  const tendenciesQuery = `SELECT * FROM tendencies WHERE player_name = $1`;
+  const notesQuery = `SELECT * FROM notes WHERE player_name = $1 ORDER BY n_created_at`;
+  const tendenciesQuery = `SELECT * FROM tendencies WHERE player_name = $1 ORDER BY t_created_at`;
 
   const {
     rows: [playerInfo],
