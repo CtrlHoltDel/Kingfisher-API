@@ -394,3 +394,55 @@ describe("/tendencies/:id", () => {
     });
   });
 });
+
+describe("/tendencies/:player", () => {
+  describe("POST", () => {
+    it("201: Adds a tendency to the specified user ", async () => {
+      const { rows: pre } = await db.query(
+        "SELECT * FROM tendencies WHERE player_name = 'aaaa'"
+      );
+
+      expect(pre).toHaveLength(0);
+
+      const { body } = await request(app)
+        .post("/tendencies/aaaa")
+        .send({ created_by: "Ctrl", tendency: "Test tendency" })
+        .expect(201);
+
+      expect(body.tendency).toMatchObject({
+        tendency_id: expect.any(Number),
+        player_name: expect.any(String),
+        tendency: expect.any(String),
+        t_created_at: expect.any(String),
+        t_created_by: expect.any(String),
+      });
+
+      const { rows: post } = await db.query(
+        "SELECT * FROM tendencies WHERE player_name = 'aaaa'"
+      );
+
+      expect(post).toHaveLength(1);
+    });
+    it("404: Returns an error if trying to add a tendency to a non-existent user", async () => {
+      const { body } = await request(app)
+        .post("/tendencies/none-existent-player")
+        .send({
+          created_by: "Ctrl",
+          tendency: "flats cold 4 with k5s",
+        })
+        .expect(404);
+
+      expect(body.error.message).toBe("Non-existent user");
+    });
+    it("400: Returns an error if passed an invalid body", async () => {
+      const { body } = await request(app)
+        .post("/tendencies/aaaa")
+        .send({
+          tendency: "flats cold 4 with k5s",
+        })
+        .expect(400);
+
+      expect(body.error.message).toBe("Missing key");
+    });
+  });
+});
