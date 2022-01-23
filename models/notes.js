@@ -20,7 +20,7 @@ exports.fetchNotesByPlayer = async ({ player }) => {
     return Promise.reject({ status: 404, message: "Non-existent user" });
 
   const query = `SELECT note_id, n_created_at, note, n_created_by FROM notes
-  WHERE player_name = $1`;
+  WHERE player_name = $1 ORDER BY n_created_at DESC`;
 
   const { rows } = await db.query(query, [player]);
 
