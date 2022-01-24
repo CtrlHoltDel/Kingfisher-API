@@ -10,7 +10,7 @@ const filterData = async (allInfo, { playerHeader }) => {
     if (player[playerHeader].length === 1) {
       return;
     }
-    return player["\\"].toLowerCase();
+    return player["\\"];
   });
 
   let playerNamesNoDuplicates = [...new Set(playerNames)].filter(
@@ -22,14 +22,14 @@ const filterData = async (allInfo, { playerHeader }) => {
   });
 
   allInfo.forEach((playerInfo) => {
-    const name = playerInfo["\\"].toLowerCase();
+    const name = playerInfo["\\"];
     const { SUMMARY, TENDENCIES, NOTES } = playerInfo;
     const indexInFinal = formattedPlayers.findIndex(
       (item) => item.name === name
     );
     if (formattedPlayers[indexInFinal]) {
       formattedPlayers[indexInFinal].type =
-        SUMMARY && typeof SUMMARY === "string" ? SUMMARY.toLowerCase() : null;
+        SUMMARY && typeof SUMMARY === "string" ? SUMMARY : null;
 
       if (formattedPlayers[indexInFinal].tendencies) {
         if (TENDENCIES !== "")
