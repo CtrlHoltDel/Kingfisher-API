@@ -1,8 +1,11 @@
 exports.generateCSV = async (type, data) => {
   if (type === "players.csv") {
-    return data.reduce((total, { player_name, type, p_created_at }) => {
-      return (total += `${player_name}, ${type}, ${p_created_at}\n`);
-    }, "player_name, type, p_created_at\n");
+    return data.reduce(
+      (total, { player_name, type, p_created_at, aliases }) => {
+        return (total += `${player_name}, ${type}, ${p_created_at}, ${aliases}\n`);
+      },
+      "player_name, type, p_created_at, aliases\n"
+    );
   }
 
   if (type === "notes.csv") {
@@ -26,3 +29,5 @@ exports.generateCSV = async (type, data) => {
     );
   }
 };
+
+exports.allCSV = async (data) => {};

@@ -1,4 +1,4 @@
-const { oldPlayers } = require("../db/data/old/old-players");
+const { oldPlayers } = require("../old/old-players");
 const fs = require("fs/promises");
 
 const config = {
@@ -18,7 +18,7 @@ const filterData = async (allInfo, { playerHeader }) => {
   );
 
   const formattedPlayers = playerNamesNoDuplicates.map((player) => {
-    return { name: player, aliases: [] };
+    return { name: player, aliases: null };
   });
 
   allInfo.forEach((playerInfo) => {
@@ -47,67 +47,43 @@ const filterData = async (allInfo, { playerHeader }) => {
     }
   });
 
-  const players = formattedPlayers.map(({ name, type }) => {
-    return { name, type };
-  });
-
   const notes = [];
   const tendencies = [];
 
   formattedPlayers.forEach((player) => {
     player.notes.forEach((note) => {
       notes.push({
-        player: player.name,
-        created_by: "unknown",
+        player_name: player.name,
+        n_created_by: "unknown",
         note: note,
-        added: Date.now(),
+        n_created_at: new Date(1643029362293),
       });
     });
 
     player.tendencies.forEach((tendency) => {
       tendencies.push({
-        player: player.name,
-        created_by: "unknown",
+        player_name: player.name,
+        t_created_by: "unknown",
         tendency: tendency,
-        added: Date.now(),
+        t_created_at: new Date(1643029362293),
       });
     });
   });
 
+  const players = formattedPlayers.map(({ name, type }) => {
+    return {
+      player_name: name,
+      type,
+      p_created_at: new Date(1643029362293),
+      aliases: null,
+    };
+  });
+
   try {
     await fs.writeFile(
-      `${__dirname.slice(0, -6)}/db/data/all.js`,
-      `exports.allPlayers = ${JSON.stringify(formattedPlayers)}`
+      `${__dirname.slice(0, -22)}/db/data/data.json`,
+      JSON.stringify({ players, notes, tendencies })
     );
-
-    console.log(`all.js created`);
-    await fs.writeFile(
-      `${__dirname.slice(0, -6)}/db/data/players.js`,
-      `exports.players = ${JSON.stringify(players)}`
-    );
-
-    console.log(`players.js created`);
-    await fs.writeFile(
-      `${__dirname.slice(0, -6)}/db/data/notes.js`,
-      `exports.notes = ${JSON.stringify(notes)}`
-    );
-
-    console.log(`notes.js created`);
-    await fs.writeFile(
-      `${__dirname.slice(0, -6)}/db/data/tendencies.js`,
-      `exports.tendencies = ${JSON.stringify(tendencies)}`
-    );
-
-    console.log("tendendies.js created");
-    await fs.writeFile(
-      `${__dirname.slice(0, -6)}/db/data/index.js`,
-      `exports.notes = require("./notes");
-        exports.tendencies = require("./tendencies");
-        exports.players = require("./players");
-    `
-    );
-
-    console.log("index created");
   } catch (err) {
     throw err;
   }

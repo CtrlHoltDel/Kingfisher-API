@@ -11,24 +11,25 @@ const createTables = async () => {
   const players = `CREATE TABLE players (
         player_name VARCHAR(100) PRIMARY KEY,
         type VARCHAR,
-        p_created_at TIMESTAMP DEFAULT NOW()
+        p_created_at TIMESTAMP DEFAULT NOW(),
+        aliases VARCHAR DEFAULT null
       );`;
 
   const notes = `CREATE TABLE notes(
-            note_id SERIAL PRIMARY KEY,
-            player_name VARCHAR NOT NULL REFERENCES players(player_name),
-            n_created_at TIMESTAMP DEFAULT NOW(),
-            note VARCHAR,
-            n_created_by VARCHAR
-          );`;
+        note_id SERIAL PRIMARY KEY,
+        player_name VARCHAR NOT NULL REFERENCES players(player_name),
+        n_created_at TIMESTAMP DEFAULT NOW(),
+        note VARCHAR,
+        n_created_by VARCHAR
+      );`;
 
   const tendencies = `CREATE TABLE tendencies(
-                tendency_id SERIAL PRIMARY KEY,
-                player_name VARCHAR NOT NULL REFERENCES players(player_name),
-                tendency VARCHAR,
-                t_created_at TIMESTAMP DEFAULT NOW(),
-                t_created_by VARCHAR
-              );`;
+        tendency_id SERIAL PRIMARY KEY,
+        player_name VARCHAR NOT NULL REFERENCES players(player_name),
+        tendency VARCHAR,
+        t_created_at TIMESTAMP DEFAULT NOW(),
+        t_created_by VARCHAR
+      );`;
 
   await db.query(players);
   await db.query(notes);

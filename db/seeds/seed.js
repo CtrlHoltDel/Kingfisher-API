@@ -1,11 +1,10 @@
-const { fillTables } = require("./utils/filltables");
-const { updateTables } = require("./utils/updateTables");
+const { fillTables } = require("./utils/fillTables");
 const { dropTables, createTables } = require("./utils/tables");
 
-const seed = async (data, update) => {
+const seed = async (data) => {
   await dropTables();
   await createTables();
-  update ? await updateTables(data) : await fillTables(data);
+  await fillTables(data);
 };
 
 module.exports = seed;

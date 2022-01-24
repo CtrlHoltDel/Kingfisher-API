@@ -1,6 +1,8 @@
 .env*
 node_modules
-data
 notes.json
 players.json
 tendencies.json
+data.json
+backup.json
+old-players.js

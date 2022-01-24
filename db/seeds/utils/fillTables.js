@@ -1,7 +1,7 @@
 const db = require("../../connection");
 const format = require("pg-format");
 
-exports.updateTables = async (data) => {
+exports.fillTables = async (data) => {
   const { players, tendencies, notes } = data;
 
   if (!players || !tendencies || !notes) {
@@ -9,7 +9,7 @@ exports.updateTables = async (data) => {
   }
 
   const playersQuery = format(
-    "INSERT INTO players (player_name, type, p_created_at) VALUES %L",
+    "INSERT INTO players (player_name, type, p_created_at, aliases) VALUES %L",
     players.map((player) => {
       return [
         player.player_name,
@@ -17,6 +17,7 @@ exports.updateTables = async (data) => {
         player.p_created_at
           ? new Date(player.p_created_at)
           : new Date(1642502115903),
+        player.aliases,
       ];
     })
   );
@@ -50,6 +51,6 @@ exports.updateTables = async (data) => {
   );
 
   await db.query(playersQuery);
-  await db.query(tendenciesQuery);
-  await db.query(notesQuery);
+  if (tendencies.length) await db.query(tendenciesQuery);
+  if (notes.length) await db.query(notesQuery);
 };
