@@ -1,5 +1,6 @@
 exports.customError = (error, req, res, next) => {
   res.status(error.status).send({ error });
+  next();
 };
 
 exports.serverError = (err, req, res, next) => {
