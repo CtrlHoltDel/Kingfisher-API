@@ -1,4 +1,4 @@
-const { oldPlayers } = require("../old/old-players");
+const { oldPlayers } = require("./old/old-players");
 const fs = require("fs/promises");
 
 const config = {
@@ -81,7 +81,7 @@ const filterData = async (allInfo, { playerHeader }) => {
 
   try {
     await fs.writeFile(
-      `${__dirname.slice(0, -22)}/db/data/data.json`,
+      `${__dirname}/sanitised/new.json`,
       JSON.stringify({ players, notes, tendencies })
     );
   } catch (err) {
