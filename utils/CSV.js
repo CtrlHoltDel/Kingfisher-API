@@ -1,33 +1,28 @@
-exports.generateCSV = async (type, data) => {
-  if (type === "players.csv") {
-    return data.reduce(
-      (total, { player_name, type, p_created_at, aliases }) => {
-        return (total += `${player_name}, ${type}, ${p_created_at}, ${aliases}\n`);
-      },
-      "player_name, type, p_created_at, aliases\n"
+exports.generateCSV = async (players, notes, tendencies) => {
+  const csv = players.sort().reduce((total, curr) => {
+    const currNotes = notes.filter(
+      (note) => note.player_name === curr.player_name
     );
-  }
 
-  if (type === "notes.csv") {
-    return data.reduce(
-      (total, { note_id, player_name, n_created_at, n_created_by, note }) => {
-        return (total += `${note_id}, ${player_name}, ${n_created_at}, ${n_created_by}, ${note}\n`);
-      },
-      "note_id, player_name, n_created_at, n_created_by, note\n"
+    const currTendencies = tendencies.filter(
+      (tendency) => tendency.player_name === curr.player_name
     );
-  }
 
-  if (type === "tendencies.csv") {
-    return data.reduce(
-      (
-        total,
-        { tendency_id, player_name, tendency, t_created_at, t_created_by }
-      ) => {
-        return (total += `${tendency_id}, ${player_name}, ${t_created_at}, ${t_created_by}, ${tendency}\n`);
-      },
-      "tendency_id, player_name, t_created_at, t_created_by, tendency\n"
-    );
-  }
+    const arrayToString = (arr, type) => {
+      return arr.reduce((total, curr, index) => {
+        const commaRemoved = curr[type].replaceAll(",", " & ");
+
+        if (index === 0) return commaRemoved;
+
+        return total + ` |-|-| ${commaRemoved}`;
+      }, "");
+    };
+
+    return (total += `${curr.player_name}, ${curr.type}, ${arrayToString(
+      currNotes,
+      "note"
+    )}, ${arrayToString(currTendencies, "tendency")}\n`);
+  }, "player_name,type,notes,tendencies\n");
+
+  return csv;
 };
-
-exports.allCSV = async (data) => {};

@@ -11,8 +11,8 @@ exports.getJSON = async (req, res, next) => {
 
 exports.getCSV = async (req, res, next) => {
   try {
-    await fetchCSV(req.params.file);
-    res.sendFile(`${__dirname.slice(0, -12)}/backup/${req.params.file}`);
+    await fetchCSV();
+    res.sendFile(`${__dirname.slice(0, -12)}/backup/all.csv`);
   } catch (err) {
     next(err);
   }
