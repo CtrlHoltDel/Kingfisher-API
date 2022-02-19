@@ -1,7 +1,7 @@
 const db = require("../../connection");
 
 const dropTables = async () => {
-  const tables = ["notes", "tendencies", "players"];
+  const tables = ["notes", "tendencies", "players", "users"];
   for (let i = 0; i < tables.length; i++) {
     await db.query(`DROP TABLE IF EXISTS ${tables[i]}`);
   }
@@ -9,9 +9,10 @@ const dropTables = async () => {
 
 const createTables = async () => {
   const players = `CREATE TABLE players (
-        player_name VARCHAR(100) PRIMARY KEY,
+        player_name VARCHAR(255) PRIMARY KEY,
         type VARCHAR,
         p_created_at TIMESTAMP DEFAULT NOW(),
+        p_created_by VARCHAR(255),
         aliases VARCHAR DEFAULT null
       );`;
 
@@ -31,9 +32,19 @@ const createTables = async () => {
         t_created_by VARCHAR
       );`;
 
+  const users = `CREATE TABLE users(
+      user_id SERIAL PRIMARY KEY,
+      username VARCHAR NOT NULL, 
+      password VARCHAR NOT NULL,
+      admin BOOLEAN DEFAULT FALSE,
+      validated BOOLEAN DEFAULT TRUE,
+      u_created_at TIMESTAMP DEFAULT NOW()
+  )`;
+
   await db.query(players);
   await db.query(notes);
   await db.query(tendencies);
+  await db.query(users);
 };
 
 module.exports = { dropTables, createTables };

@@ -25,7 +25,7 @@ exports.getPlayerInfo = async (req, res, next) => {
 
 exports.postPlayer = async (req, res, next) => {
   try {
-    const newPlayer = await insertPlayer(req.body);
+    const newPlayer = await insertPlayer(req.body, req.authData);
     res.status(201).send(newPlayer);
   } catch (err) {
     next(err);

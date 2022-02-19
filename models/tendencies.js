@@ -24,15 +24,22 @@ exports.amendTendency = async ({ id }, { tendency }) => {
   return rows[0];
 };
 
-exports.insertTendency = async ({ created_by, tendency }, { player }) => {
-  if (!created_by || !tendency)
-    return Promise.reject({ status: 400, message: "Missing key" });
+exports.insertTendency = async (
+  { tendency },
+  { player },
+  user = { user: { username: "unknown" } }
+) => {
+  if (!tendency) return Promise.reject({ status: 400, message: "Missing key" });
 
   if (await checkPlayer(player))
     return Promise.reject({ status: 404, message: "Non-existent user" });
 
   const query = `INSERT INTO tendencies(player_name, tendency, t_created_by) VALUES ($1, $2, $3) RETURNING *`;
-  const { rows } = await db.query(query, [player, tendency, created_by]);
+  const { rows } = await db.query(query, [
+    player,
+    tendency,
+    user.user.username,
+  ]);
 
   return rows[0];
 };

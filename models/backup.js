@@ -6,8 +6,17 @@ exports.fetchJSON = async () => {
   const players = await allItems("players");
   const notes = await allItems("notes");
   const tendencies = await allItems("tendencies");
+  const users = await allItems("users");
 
-  return { players, notes, tendencies };
+  await writeFile(
+    `${__dirname.slice(0, -7)}/backup/all.json`,
+    JSON.stringify({
+      players,
+      notes,
+      tendencies,
+      users,
+    })
+  );
 };
 
 exports.fetchCSV = async () => {

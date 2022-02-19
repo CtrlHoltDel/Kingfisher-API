@@ -2,7 +2,7 @@ const db = require("../../connection");
 const format = require("pg-format");
 
 exports.fillTables = async (data) => {
-  const { players, tendencies, notes } = data;
+  const { players, tendencies, notes, users } = data;
 
   if (!players || !tendencies || !notes) {
     console.log("Missing Data");
@@ -50,7 +50,21 @@ exports.fillTables = async (data) => {
     })
   );
 
+  const usersQuery = format(
+    `INSERT INTO users(username, password, admin, validated, u_created_at) VALUES %L`,
+    users.map((user) => {
+      return [
+        user.username,
+        user.password,
+        user.admin,
+        user.validated,
+        user.u_created_at,
+      ];
+    })
+  );
+
   await db.query(playersQuery);
   if (tendencies.length) await db.query(tendenciesQuery);
   if (notes.length) await db.query(notesQuery);
+  if (users.length) await db.query(usersQuery);
 };

@@ -4,5 +4,5 @@ const { PORT = 4000 } = process.env;
 
 app.listen(PORT, (err) => {
   if (err) throw err;
-  console.log(`Listening on ${PORT}...`);
+  console.log(`Listening at http://localhost:${PORT}...`);
 });
