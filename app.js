@@ -17,6 +17,7 @@ const tendenciesRouter = require("./routes/tendencies");
 const authRouter = require("./routes/auth");
 
 const passport = require("passport");
+const adminRouter = require("./routes/admin");
 require("./strategies/local");
 
 const app = express();
@@ -29,15 +30,13 @@ app.get("/", (req, res, next) => {
   res.status(200).sendFile(`${__dirname}/index.json`);
 });
 app.use("/auth", authRouter);
+app.use("/backup", backupRouter);
 app.use(verifyUserToken);
 
 app.use("/players", playersRouter);
 app.use("/notes", notesRouter);
 app.use("/tendencies", tendenciesRouter);
-app.use("/backup", verifyAdmin, backupRouter);
-app.get("/admin", verifyAdmin, (req, res, next) => {
-  res.json({ you: "admin" });
-});
+app.use("/admin", verifyAdmin, adminRouter);
 
 app.use(customError);
 app.use(serverError);
