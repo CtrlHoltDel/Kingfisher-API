@@ -2,8 +2,8 @@ const { fetchJSON, fetchCSV } = require("../models/backup");
 
 exports.getJSON = async (req, res, next) => {
   try {
-    const backupJSON = await fetchJSON();
-    res.status(200).send(backupJSON);
+    await fetchJSON();
+    res.sendFile(`${__dirname.slice(0, -12)}/backup/all.json`);
   } catch (err) {
     next(err);
   }

@@ -24,7 +24,7 @@ exports.patchTendency = async (req, res, next) => {
 
 exports.postTendency = async (req, res, next) => {
   try {
-    const tendency = await insertTendency(req.body, req.params);
+    const tendency = await insertTendency(req.body, req.params, req.authData);
     res.status(201).send({ tendency });
   } catch (err) {
     next(err);

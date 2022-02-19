@@ -27,16 +27,19 @@ exports.fetchNotesByPlayer = async ({ player }) => {
   return { notes: rows };
 };
 
-exports.insertNote = async ({ created_by, note }, { player }) => {
+exports.insertNote = async (
+  { note },
+  { player },
+  user = { user: { username: "unknown" } }
+) => {
   if (await checkPlayer(player))
     return Promise.reject({ status: 404, message: "Non-existent user" });
 
-  if (!created_by || !note)
-    return Promise.reject({ status: 400, message: "Invalid body" });
+  if (!note) return Promise.reject({ status: 400, message: "Invalid body" });
 
   const query = `INSERT INTO notes(player_name, note, n_created_by) VALUES($1, $2, $3) RETURNING *`;
 
-  const { rows } = await db.query(query, [player, note, created_by]);
+  const { rows } = await db.query(query, [player, note, user.user.username]);
 
   return rows[0];
 };

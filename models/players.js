@@ -48,17 +48,25 @@ exports.fetchPlayerInfo = async ({ player }) => {
   return { player: playerInfo, notes, tendencies };
 };
 
-exports.insertPlayer = async ({ player_name, type = null }) => {
+exports.insertPlayer = async (
+  { player_name, type = null },
+  user = { user: { username: "unknown" } }
+) => {
   if (typeof player_name === "object")
     return Promise.reject({ status: 400, message: "Invalid body" });
 
   if (!(await checkPlayer(player_name)))
     return Promise.reject({ status: 400, message: "User already exists" });
 
-  const query = `INSERT INTO players(player_name, type) VALUES ($1, $2) RETURNING *`;
+  const query = `INSERT INTO players(player_name, type, p_created_by) VALUES ($1, $2, $3) RETURNING *`;
+
   const {
     rows: [player],
-  } = await db.query(query, [player_name, type]);
+  } = await db.query(query, [
+    player_name,
+    type,
+    user.user.username || "unknown",
+  ]);
 
   return { player };
 };

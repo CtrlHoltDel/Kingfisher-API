@@ -26,7 +26,7 @@ exports.getNotesByPlayer = async (req, res, next) => {
 
 exports.postNote = async (req, res, next) => {
   try {
-    const note = await insertNote(req.body, req.params);
+    const note = await insertNote(req.body, req.params, req.authData);
     res.status(201).send({ note });
   } catch (err) {
     next(err);
