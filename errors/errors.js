@@ -1,17 +1,15 @@
-exports.customError = (error, req, res, next) => {
-  if (error.status) {
-    res.status(error.status).send({ error });
+exports.customError = (err, req, res, next) => {
+  if (err.status) {
+    res.status(err.status).send({ error: err });
     return;
   }
 
-  if (error.message === "Missing credentials") {
-    res
-      .status(400)
-      .send({ error: { status: 400, message: "Missing credentials" } });
+  if (err.message === "Missing credentials") {
+    res.status(400).send({ error: { status: 400, message: err.message } });
     return;
   }
 
-  next(error);
+  next(err);
 };
 
 exports.serverError = (err, req, res, next) => {

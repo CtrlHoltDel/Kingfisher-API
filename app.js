@@ -15,9 +15,9 @@ const notesRouter = require("./routes/notes");
 const playersRouter = require("./routes/players");
 const tendenciesRouter = require("./routes/tendencies");
 const authRouter = require("./routes/auth");
+const adminRouter = require("./routes/admin");
 
 const passport = require("passport");
-const adminRouter = require("./routes/admin");
 require("./strategies/local");
 
 const app = express();

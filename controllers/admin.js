@@ -1,4 +1,4 @@
-const { fetchUsers, amendUser } = require("../models/admin");
+const { fetchUsers, amendUser, removeUser } = require("../models/admin");
 
 exports.getUsers = async (req, res, next) => {
   try {
@@ -16,5 +16,14 @@ exports.patchUser = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     next(error);
+  }
+};
+
+exports.delUser = async (req, res, next) => {
+  try {
+    await removeUser(req.params);
+    res.sendStatus(204);
+  } catch (err) {
+    next(err);
   }
 };

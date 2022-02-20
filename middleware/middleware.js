@@ -14,6 +14,10 @@ exports.verifyUserToken = async (req, res, next) => {
       process.env.JWT_SECRET
     );
 
+    if (!authData.user.validated) {
+      next({ status: 403, message: "Unvalidated Account" });
+    }
+
     req.authData = authData;
     next();
   } catch (err) {
@@ -26,7 +30,7 @@ exports.verifyUserToken = async (req, res, next) => {
 
 exports.verifyAdmin = (req, res, next) => {
   if (!req.authData.user.admin) {
-    next({ status: 403, error: "Contact an administrator" });
+    next({ status: 403, message: "Contact an administrator" });
   }
   next();
 };
