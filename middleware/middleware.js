@@ -17,16 +17,16 @@ exports.verifyUserToken = async (req, res, next) => {
     req.authData = authData;
     next();
   } catch (err) {
+    console.log(err.message);
     next({
       status: 403,
-      message: (err.message = "jwt expired"
-        ? "Expired Token"
-        : "Invalid token"),
+      message: err.message,
     });
   }
 };
 
 exports.verifyAdmin = (req, res, next) => {
+  console.log(req.authData);
   if (!req.authData.user.admin) {
     next({ status: 403, error: "Contact an administrator" });
   }

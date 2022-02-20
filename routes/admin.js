@@ -1,7 +1,8 @@
-const { getUsers } = require("../controllers/admin");
+const { getUsers, patchUser } = require("../controllers/admin");
 
 const adminRouter = require("express").Router();
 
-adminRouter.post("/users", getUsers);
+adminRouter.route("/users").get(getUsers);
+adminRouter.patch("/users/:id", patchUser);
 
 module.exports = adminRouter;

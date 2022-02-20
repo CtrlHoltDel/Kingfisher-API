@@ -4,7 +4,7 @@ const format = require("pg-format");
 exports.fillTables = async (data) => {
   const { players, tendencies, notes, users } = data;
 
-  if (!players || !tendencies || !notes) {
+  if (!players || !tendencies || !notes || !users) {
     console.log("Missing Data");
   }
 

@@ -4,12 +4,15 @@ const request = require("supertest");
 const seed = require("../db/seeds/seed");
 const fs = require("fs/promises");
 
-let token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJfaWQiOjEsInVzZXJuYW1lIjoidGVzdCIsInBhc3N3b3JkIjoiJDJhJDEwJGM0TXU2Mmx4TFJNV2prTEtFMUd5TS54OFUuTzdFZGh4WDJaTHFtOW9HbXJvMFU5ZWhqYldXIiwidV9jcmVhdGVkX2F0IjoiMjAyMi0wMi0xOVQwNzozNjowOS4xOTdaIn0sImlhdCI6MTY0NTI1NjE2OX0.aiBnv_tOwqzaUnWlwvVTPQe2oEOp-Wkugao1X52Pztk";
+const token =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJfaWQiOjQsInVzZXJuYW1lIjoidGVzdCIsInBhc3N3b3JkIjoiJDJhJDEwJFpGNHZ6RVkvdnR1RlhoR0dsTUFhV2VhNC55d2F6c3pSN3BNQXMuQnF2OVN2M2RpNFNvV1kyIiwiYWRtaW4iOmZhbHNlLCJ2YWxpZGF0ZWQiOnRydWUsInVfY3JlYXRlZF9hdCI6IjIwMjItMDItMTlUMTY6MDM6MzguMTcwWiJ9LCJpYXQiOjE2NDUyODY2MTh9.XagiMDSGBJb8qaoocNcXo9V47RXr5g1Nvfi7-IRpXmk";
+
+const adminToken =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJfaWQiOjEsInVzZXJuYW1lIjoiY3RybGhvbHRkZWwiLCJwYXNzd29yZCI6IiQyYSQxMCRZdG9ydW5wRGJQNkFtc2JrUUxIMkllNnVSMy91ZmozTWQ2czlEY2dDckxMUTVUTDhkamxGbSIsImFkbWluIjp0cnVlLCJ2YWxpZGF0ZWQiOnRydWUsInVfY3JlYXRlZF9hdCI6IjIwMjItMDItMTlUMDk6NTY6NTQuMjQ0WiJ9LCJpYXQiOjE2NDUyODY3MzZ9.VMECtSOc5A52xm1XzsNp9KhSiKyUZoO-p0N0pT-YQR4";
 
 beforeEach(async () => {
   const data = await fs.readFile(
-    `${__dirname.slice(0, -10)}/db/data/backup.json`
+    `${__dirname.slice(0, -10)}/db/data/testdata.json`
   );
 
   await seed(JSON.parse(data));
@@ -399,7 +402,7 @@ describe("/notes/:player", () => {
   });
 });
 
-describe.only("/tendencies/:id", () => {
+describe("/tendencies/:id", () => {
   describe("DEL", () => {
     it("204: Deletes the tendency at the specified id", async () => {
       const { rows: pre } = await db.query(
@@ -459,7 +462,7 @@ describe.only("/tendencies/:id", () => {
   });
 });
 
-describe.only("/tendencies/:player", () => {
+describe("/tendencies/:player", () => {
   describe("POST", () => {
     it("201: Adds a tendency to the specified user ", async () => {
       const { rows: pre } = await db.query(
@@ -505,7 +508,7 @@ describe.only("/tendencies/:player", () => {
         .post("/tendencies/aaaa")
         .set("Authorisation", `Bearer ${token}`)
         .send({
-          tendency: "flats cold 4 with k5s",
+          tendendcy: "flats cold 4 with k5s",
         })
         .expect(400);
 
@@ -518,7 +521,6 @@ describe("/auth/register", () => {
   it("201: Succesfully registers a user", async () => {
     const { body } = await request(app)
       .post("/auth/register")
-      .set("Authorisation", `Bearer ${token}`)
       .send({ username: "test", password: "test", confirm: "test" })
       .expect(201);
 
@@ -528,13 +530,11 @@ describe("/auth/register", () => {
   it("400: Returns an error if there's already a username by that name", async () => {
     await request(app)
       .post("/auth/register")
-      .set("Authorisation", `Bearer ${token}`)
       .send({ username: "test", password: "test", confirm: "test" })
       .expect(201);
 
     await request(app)
       .post("/auth/register")
-      .set("Authorisation", `Bearer ${token}`)
       .send({ username: "test", password: "test", confirm: "test" })
       .expect(400);
   });
@@ -574,5 +574,34 @@ describe("/auth/login", () => {
       .expect(400);
 
     expect(body.error.message).toBe("Incorrect Password");
+  });
+});
+
+describe("/admin/users", () => {
+  it("200: Returns a list of all users", async () => {
+    const { body } = await request(app)
+      .get("/admin/users")
+      .set("Authorisation", `Bearer ${adminToken}`)
+      .expect(200);
+
+    expect(body.users).toHaveLength(3);
+    expect(body.users[0].user_id).toBe(2);
+  });
+});
+
+describe("/admin/users/:id", () => {
+  it("201: Returns the amended user", async () => {
+    const { body } = await request(app)
+      .patch("/admin/users/3")
+      .set("Authorisation", `Bearer ${adminToken}`)
+      .send({ validated: true, admin: true })
+      .expect(201);
+
+    expect(body.user[0]).toMatchObject({
+      username: "test3",
+      admin: true,
+      validated: true,
+      user_id: 3,
+    });
   });
 });

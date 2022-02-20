@@ -4,9 +4,7 @@ const { handleRegister } = require("../models/auth");
 exports.postLogin = (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
-    console.log(user);
     if (!user) return next(info);
-
     res.json({ user });
   })(req, res, next);
 };
