@@ -22,7 +22,10 @@ passport.use(
 
       if (checkPassword) {
         const token = await jwt.sign({ user }, process.env.JWT_SECRET);
-        done(null, { username: user.username, token });
+
+        const { username, admin, validated } = user;
+
+        done(null, { username, token, admin, validated });
       } else {
         done(null, false, { status: 400, message: "Incorrect Password" });
       }

@@ -5,6 +5,7 @@ exports.postLogin = (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
     if (!user) return next(info);
+
     res.json({ user });
   })(req, res, next);
 };

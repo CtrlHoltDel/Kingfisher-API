@@ -17,7 +17,6 @@ exports.verifyUserToken = async (req, res, next) => {
     req.authData = authData;
     next();
   } catch (err) {
-    console.log(err.message);
     next({
       status: 403,
       message: err.message,
@@ -26,7 +25,6 @@ exports.verifyUserToken = async (req, res, next) => {
 };
 
 exports.verifyAdmin = (req, res, next) => {
-  console.log(req.authData);
   if (!req.authData.user.admin) {
     next({ status: 403, error: "Contact an administrator" });
   }
