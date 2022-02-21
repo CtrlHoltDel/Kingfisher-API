@@ -2,7 +2,6 @@ const passport = require("passport");
 const { handleRegister } = require("../models/auth");
 
 exports.postLogin = (req, res, next) => {
-  console.log(req.body);
   passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
     if (!user) return next(info);
