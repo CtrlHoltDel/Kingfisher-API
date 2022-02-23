@@ -8,6 +8,8 @@ const {
 
 playersRouter.route("/").get(getPlayers).post(postPlayer);
 playersRouter.get("/:player", getPlayerInfo);
+
+//Add this to the /:player endpoint as patch instead.
 playersRouter.patch("/:player/type", patchType);
 
 module.exports = playersRouter;

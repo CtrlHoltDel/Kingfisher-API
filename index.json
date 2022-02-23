@@ -1,6 +1,0 @@
-{
-  "endpoints": {
-    "/players": "Returns a full list of players",
-    "/notes": "Returns a full list of notes"
-  }
-}

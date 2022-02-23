@@ -4,11 +4,19 @@ const request = require("supertest");
 const seed = require("../db/seeds/seed");
 const fs = require("fs/promises");
 
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJfaWQiOjQsInVzZXJuYW1lIjoidGVzdCIsInBhc3N3b3JkIjoiJDJhJDEwJFpGNHZ6RVkvdnR1RlhoR0dsTUFhV2VhNC55d2F6c3pSN3BNQXMuQnF2OVN2M2RpNFNvV1kyIiwiYWRtaW4iOmZhbHNlLCJ2YWxpZGF0ZWQiOnRydWUsInVfY3JlYXRlZF9hdCI6IjIwMjItMDItMTlUMTY6MDM6MzguMTcwWiJ9LCJpYXQiOjE2NDUyODY2MTh9.XagiMDSGBJb8qaoocNcXo9V47RXr5g1Nvfi7-IRpXmk";
+let adminToken;
+let token;
 
-const adminToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJfaWQiOjEsInVzZXJuYW1lIjoiY3RybGhvbHRkZWwiLCJwYXNzd29yZCI6IiQyYSQxMCRZdG9ydW5wRGJQNkFtc2JrUUxIMkllNnVSMy91ZmozTWQ2czlEY2dDckxMUTVUTDhkamxGbSIsImFkbWluIjp0cnVlLCJ2YWxpZGF0ZWQiOnRydWUsInVfY3JlYXRlZF9hdCI6IjIwMjItMDItMTlUMDk6NTY6NTQuMjQ0WiJ9LCJpYXQiOjE2NDUyODY3MzZ9.VMECtSOc5A52xm1XzsNp9KhSiKyUZoO-p0N0pT-YQR4";
+setToken = async () => {
+  const { body } = await request(app)
+    .post("/auth/login")
+    .send({ username: "admin", password: "admin" });
+
+  adminToken = body.user.token;
+  token = body.user.token;
+};
+
+setToken();
 
 beforeEach(async () => {
   const data = await fs.readFile(
@@ -28,42 +36,23 @@ describe("/players", () => {
         .set("Authorisation", `Bearer ${token}`)
         .expect(200);
       expect(body.count).toBeTruthy();
-      expect(body.players).toHaveLength(10);
-      expect(body.players[0].player_name).toBe("clydedrexler");
+      expect(body.players).toHaveLength(2);
+      expect(body.players[0].player_name).toBe("test_player_1");
     });
     it("200: Works with page and limit query", async () => {
       const { body } = await request(app)
         .get("/players?limit=5&p=2")
         .set("Authorisation", `Bearer ${token}`)
         .expect(200);
-      expect(body.players).toHaveLength(5);
-      expect(body.players[0].player_name).toBe("fire ball");
+      expect(body.players).toHaveLength(0);
     });
     it("200: Works with search query", async () => {
       const { body } = await request(app)
         .get("/players?search=bo")
         .set("Authorisation", `Bearer ${token}`)
         .expect(200);
-      expect(body.count).toBe(26);
-      expect(body.players).toHaveLength(10);
-
+      expect(body.count).toBe(0);
       expect(body.exactMatch).toBe(null);
-    });
-    it("200: Passes back an exact match as well as fuzzy", async () => {
-      const { body } = await request(app)
-        .get("/players?search=blue")
-        .set("Authorisation", `Bearer ${token}`)
-        .expect(200);
-
-      expect(body.count).toBe(3);
-      expect(body.players).toHaveLength(3);
-      expect(body.exactMatch).toEqual({
-        aliases: null,
-        player_name: "blue",
-        type: "PASSIVE FISH",
-        p_created_by: null,
-        p_created_at: expect.any(String),
-      });
     });
     it("400: Returns an error if passed invalid limit/page", async () => {
       const { body } = await request(app)
@@ -128,7 +117,7 @@ describe("/players", () => {
       const { body } = await request(app)
         .post("/players")
         .set("Authorisation", `Bearer ${token}`)
-        .send({ player_name: "bubble boy" })
+        .send({ player_name: "test_player_1" })
         .expect(400);
 
       expect(body.error.message).toBe("User already exists");
@@ -148,7 +137,7 @@ describe("/players/:player", () => {
   describe("GET", () => {
     it("200: Returns all information about a given player", async () => {
       const { body } = await request(app)
-        .get("/players/**jj**")
+        .get("/players/test_player_1")
         .set("Authorisation", `Bearer ${token}`)
         .expect(200);
 
@@ -159,12 +148,12 @@ describe("/players/:player", () => {
       });
 
       expect(body.player).toMatchObject({
-        player_name: "**jj**",
-        type: "whale",
+        player_name: "test_player_1",
+        type: null,
         p_created_at: expect.any(String),
       });
-      expect(body.notes).toHaveLength(2);
-      expect(body.tendencies).toHaveLength(0);
+      expect(body.notes).toHaveLength(3);
+      expect(body.tendencies).toHaveLength(2);
     });
     it("404: Returns an error if passed an invalid user", async () => {
       const { body } = await request(app)
@@ -183,17 +172,17 @@ describe("/players/:player/type", () => {
       const {
         body: { player },
       } = await request(app)
-        .patch("/players/aakk/type")
+        .patch("/players/test_player_1/type")
         .set("Authorisation", `Bearer ${token}`)
         .send({ type: "fish" })
         .expect(201);
 
       const { rows } = await db.query(
-        `SELECT * FROM players WHERE player_name = 'aakk'`
+        `SELECT * FROM players WHERE player_name = 'test_player_1'`
       );
 
       expect(player).toMatchObject({
-        player_name: "aakk",
+        player_name: "test_player_1",
         type: "fish",
         p_created_at: expect.any(String),
       });
@@ -209,13 +198,13 @@ describe("/players/:player/type", () => {
     });
     it("400: Returns an error if passed an invalid body", async () => {
       await request(app)
-        .patch("/players/aakk/type")
+        .patch("/players/test_player_1/type")
         .set("Authorisation", `Bearer ${token}`)
         .send({ badKey: "invalid" })
         .expect(400);
 
       await request(app)
-        .patch("/players/aakk/type")
+        .patch("/players/test_player_1/type")
         .set("Authorisation", `Bearer ${token}`)
         .send({ type: 233 })
         .expect(400);
@@ -230,7 +219,7 @@ describe("/notes", () => {
         .get("/notes")
         .set("Authorisation", `Bearer ${token}`)
         .expect(200);
-      expect(body.notes).toHaveLength(10);
+      expect(body.notes).toHaveLength(4);
       body.notes.forEach((note) => {
         expect(note).toMatchObject({
           note_id: expect.any(Number),
@@ -267,18 +256,18 @@ describe("/notes/:id", () => {
   describe("DEL", () => {
     it("204: Deletes the note specified by the id", async () => {
       const { rows: pre } = await db.query(
-        "SELECT * FROM notes WHERE note_id = 85"
+        "SELECT * FROM notes WHERE note_id = 2"
       );
 
       expect(pre).toHaveLength(1);
 
       await request(app)
-        .del("/notes/85")
+        .del("/notes/2")
         .set("Authorisation", `Bearer ${token}`)
         .expect(204);
 
       const { rows: post } = await db.query(
-        "SELECT * FROM notes WHERE note_id = 85"
+        "SELECT * FROM notes WHERE note_id = 2"
       );
 
       expect(post).toHaveLength(0);
@@ -304,16 +293,16 @@ describe("/notes/:id", () => {
   describe("PATCH", () => {
     it("204: Updates the note body and the date of the specified note", async () => {
       await request(app)
-        .patch("/notes/10")
+        .patch("/notes/2")
         .set("Authorisation", `Bearer ${token}`)
-        .send({ note: "This is the updated note for note 10" })
+        .send({ note: "This is the updated note for note 2" })
         .expect(201);
 
       const { rows } = await db.query(
-        `SELECT * FROM notes WHERE note_id = '10'`
+        `SELECT * FROM notes WHERE note_id = '2'`
       );
 
-      expect(rows[0].note).toBe("This is the updated note for note 10");
+      expect(rows[0].note).toBe("This is the updated note for note 2");
     });
 
     it("400: Returns an error if passed an invalid id", async () => {
@@ -337,7 +326,7 @@ describe("/notes/:player", () => {
   describe("GET", () => {
     it("200: Returns all notes for a given player", async () => {
       const { body } = await request(app)
-        .get("/notes/$$$subbu$$$")
+        .get("/notes/test_player_1")
         .set("Authorisation", `Bearer ${token}`)
         .expect(200);
       expect(body.notes).toHaveLength(3);
@@ -353,13 +342,13 @@ describe("/notes/:player", () => {
   describe("POST", () => {
     it("201: Adds a note to a specific user", async () => {
       const { body: pre } = await request(app)
-        .get("/players/aaaa")
+        .get("/players/test_player_1")
         .set("Authorisation", `Bearer ${token}`)
         .expect(200);
-      expect(pre.notes).toHaveLength(1);
+      expect(pre.notes).toHaveLength(3);
 
       const { body } = await request(app)
-        .post("/notes/aaaa")
+        .post("/notes/test_player_1")
         .set("Authorisation", `Bearer ${token}`)
         .send({
           note: "flats cold 4 with k5s",
@@ -367,13 +356,13 @@ describe("/notes/:player", () => {
         .expect(201);
 
       const { body: post } = await request(app)
-        .get("/players/aaaa")
+        .get("/players/test_player_1")
         .set("Authorisation", `Bearer ${token}`);
-      expect(post.notes).toHaveLength(2);
+      expect(post.notes).toHaveLength(4);
 
       expect(body.note).toMatchObject({
         note_id: expect.any(Number),
-        player_name: "aaaa",
+        player_name: "test_player_1",
         n_created_at: expect.any(String),
         note: "flats cold 4 with k5s",
       });
@@ -392,7 +381,7 @@ describe("/notes/:player", () => {
     });
     it("400: Returns an error if passed an invalid body", async () => {
       const { body } = await request(app)
-        .post("/notes/aaaa")
+        .post("/notes/test_player_1")
         .set("Authorisation", `Bearer ${token}`)
         .send({ missing: "key" })
         .expect(400);
@@ -407,16 +396,16 @@ describe("/tendencies/:id", () => {
     it("204: Deletes the tendency at the specified id", async () => {
       const { rows: pre } = await db.query(
         "SELECT * FROM tendencies WHERE tendency_id = $1",
-        [4]
+        [1]
       );
       expect(pre).toHaveLength(1);
       await request(app)
-        .delete("/tendencies/4")
+        .delete("/tendencies/1")
         .set("Authorisation", `Bearer ${token}`)
         .expect(204);
       const { rows: post } = await db.query(
         "SELECT * FROM tendencies WHERE tendency_id = $1",
-        [4]
+        [1]
       );
       expect(post).toHaveLength(0);
     });
@@ -439,7 +428,7 @@ describe("/tendencies/:id", () => {
   describe("PATCH", () => {
     it("204: Updates the tendency body and date of the specified tendency ", async () => {
       await request(app)
-        .patch("/tendencies/5")
+        .patch("/tendencies/2")
         .set("Authorisation", `Bearer ${token}`)
         .send({ tendency: "Updated tendency" })
         .expect(201);
@@ -466,15 +455,15 @@ describe("/tendencies/:player", () => {
   describe("POST", () => {
     it("201: Adds a tendency to the specified user ", async () => {
       const { rows: pre } = await db.query(
-        "SELECT * FROM tendencies WHERE player_name = 'aaaa'"
+        "SELECT * FROM tendencies WHERE player_name = 'test_player_1'"
       );
 
-      expect(pre).toHaveLength(0);
+      expect(pre).toHaveLength(2);
 
       const { body } = await request(app)
-        .post("/tendencies/aaaa")
+        .post("/tendencies/test_player_1")
         .set("Authorisation", `Bearer ${token}`)
-        .send({ created_by: "Ctrl", tendency: "Test tendency" })
+        .send({ created_by: "admin", tendency: "Test tendency" })
         .expect(201);
 
       expect(body.tendency).toMatchObject({
@@ -486,10 +475,10 @@ describe("/tendencies/:player", () => {
       });
 
       const { rows: post } = await db.query(
-        "SELECT * FROM tendencies WHERE player_name = 'aaaa'"
+        "SELECT * FROM tendencies WHERE player_name = 'test_player_1'"
       );
 
-      expect(post).toHaveLength(1);
+      expect(post).toHaveLength(3);
     });
     it("404: Returns an error if trying to add a tendency to a non-existent user", async () => {
       const { body } = await request(app)
@@ -584,24 +573,23 @@ describe("/admin/users", () => {
       .set("Authorisation", `Bearer ${adminToken}`)
       .expect(200);
 
-    expect(body.users).toHaveLength(3);
-    expect(body.users[0].user_id).toBe(2);
+    expect(body.users).toHaveLength(2);
   });
 });
 
 describe("/admin/users/:id", () => {
   it("201: Returns the amended user", async () => {
     const { body } = await request(app)
-      .patch("/admin/users/3")
+      .patch("/admin/users/2")
       .set("Authorisation", `Bearer ${adminToken}`)
       .send({ validated: true, admin: true })
       .expect(201);
 
     expect(body.user[0]).toMatchObject({
-      username: "test3",
+      username: "test_user",
       admin: true,
       validated: true,
-      user_id: 3,
+      user_id: 2,
     });
   });
 });

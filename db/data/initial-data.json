@@ -1,0 +1,71 @@
+{
+  "players": [
+    {
+      "player_name": "test_player_1",
+      "type": null,
+      "p_created_at": "2022-01-18T10:35:15.903Z",
+      "aliases": null
+    },
+    {
+      "player_name": "test_player_2",
+      "type": null,
+      "p_created_at": "2022-01-18T10:35:15.903Z",
+      "aliases": null
+    }
+  ],
+  "notes": [
+    {
+      "note_id": 1,
+      "player_name": "test_player_1",
+      "n_created_at": "2022-01-18T10:35:15.903Z",
+      "note": "Test note 1",
+      "n_created_by": "unknown"
+    },
+    {
+      "note_id": 2,
+      "player_name": "test_player_2",
+      "n_created_at": "2022-01-18T10:35:15.903Z",
+      "note": "Test note 2",
+      "n_created_by": "unknown"
+    },
+    {
+      "note_id": 3,
+      "player_name": "test_player_1",
+      "n_created_at": "2022-01-18T10:35:15.903Z",
+      "note": "Test note 3",
+      "n_created_by": "unknown"
+    },
+    {
+      "note_id": 4,
+      "player_name": "test_player_1",
+      "n_created_at": "2022-01-18T10:35:15.903Z",
+      "note": "Test note 4",
+      "n_created_by": "unknown"
+    }
+  ],
+  "tendencies": [
+    {
+      "tendency_id": 1,
+      "player_name": "test_player_1",
+      "tendency": "tendency-1",
+      "t_created_at": "2022-01-18T10:35:15.903Z",
+      "t_created_by": "test_user_1"
+    },
+    {
+      "tendency_id": 2,
+      "player_name": "test_player_1",
+      "tendency": "tendency-2",
+      "t_created_at": "2022-01-18T10:35:15.903Z",
+      "t_created_by": "test_user_2"
+    }
+  ],
+  "users": [
+    {
+      "username": "test_user",
+      "password": "password_key",
+      "admin": false,
+      "validated": true,
+      "u_created_at": "2022-02-19T13:27:03.185Z"
+    }
+  ]
+}

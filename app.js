@@ -27,7 +27,7 @@ app.use(passport.initialize());
 app.use(express.json());
 
 app.get("/", (req, res, next) => {
-  res.status(200).sendFile(`${__dirname}/index.json`);
+  res.status(200).sendFile(`${__dirname}/endpoints.json`);
 });
 
 app.use("/auth", authRouter);

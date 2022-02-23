@@ -1,5 +1,6 @@
 const db = require("../../connection");
 const format = require("pg-format");
+const bcrypt = require("bcryptjs");
 
 exports.fillTables = async (data) => {
   const { players, tendencies, notes, users } = data;
@@ -7,6 +8,24 @@ exports.fillTables = async (data) => {
   if (!players || !tendencies || !notes || !users) {
     console.log("Missing Data");
   }
+
+  const usersQuery = format(
+    `INSERT INTO users(username, password, admin, validated, u_created_at) VALUES %L`,
+    users.map((user) => {
+      return [
+        user.username,
+        user.password,
+        user.admin,
+        user.validated,
+        user.u_created_at,
+      ];
+    })
+  );
+
+  await db.query(
+    `INSERT INTO users (username, password, admin) VALUES ($1, $2, $3) RETURNING username, u_created_at`,
+    ["admin", await bcrypt.hash("admin", 10), true]
+  );
 
   const playersQuery = format(
     "INSERT INTO players (player_name, type, p_created_at, aliases) VALUES %L",
@@ -46,19 +65,6 @@ exports.fillTables = async (data) => {
         note.n_created_at
           ? new Date(note.n_created_at)
           : new Date(1642502115903),
-      ];
-    })
-  );
-
-  const usersQuery = format(
-    `INSERT INTO users(username, password, admin, validated, u_created_at) VALUES %L`,
-    users.map((user) => {
-      return [
-        user.username,
-        user.password,
-        user.admin,
-        user.validated,
-        user.u_created_at,
       ];
     })
   );
