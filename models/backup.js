@@ -5,13 +5,13 @@ const db = require("../db/connection");
 const { isAfter } = require("date-fns");
 
 exports.fetchJSON = async (backupKey) => {
-  // const { rows } = await db.query("SELECT * FROM keys WHERE key = $1", [
-  //   backupKey,
-  // ]);
+  const { rows } = await db.query("SELECT * FROM keys WHERE key = $1", [
+    backupKey,
+  ]);
 
-  // if (!rows[0] || isAfter(Date.now(), rows[0].expiry_date)) {
-  //   return Promise.reject({ status: 403, error: "Invalid or expired key" });
-  // }
+  if (!rows[0] || isAfter(Date.now(), rows[0].expiry_date)) {
+    return Promise.reject({ status: 403, error: "Invalid or expired key" });
+  }
 
   const players = await allItems("players");
   const notes = await allItems("notes");
