@@ -24,7 +24,7 @@ Node - `v16.13.0`
 
 PSQL version - `12.9`
 
-### Walkthrough
+### Local Setup
 
 - Clone this repository and install the dependencies (installed by typing `npm install` in the terminal whilst in the root folder).
 
