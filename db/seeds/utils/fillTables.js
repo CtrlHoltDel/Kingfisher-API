@@ -28,7 +28,7 @@ exports.fillTables = async (data) => {
       return [
         tendency.player_name,
         tendency.tendency,
-        tendency.created_by,
+        tendency.t_created_by,
         tendency.t_created_at && tendency.t_created_at !== "unknown"
           ? new Date(tendency.t_created_at)
           : new Date(1642502115903),

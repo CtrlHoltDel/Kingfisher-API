@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const db = require("../db/connection");
 
 exports.verifyUserToken = async (req, res, next) => {
   const bearerHeader = req.headers["authorisation"];
@@ -16,6 +17,16 @@ exports.verifyUserToken = async (req, res, next) => {
 
     if (!authData.user.validated) {
       next({ status: 403, message: "Unvalidated Account" });
+      return;
+    }
+
+    const { rows } = await db.query(`SELECT * FROM users WHERE user_id = $1`, [
+      authData.user.user_id,
+    ]);
+
+    if (!rows[0].validated) {
+      next({ status: 403, message: "Unvalidated Account" });
+      return;
     }
 
     req.authData = authData;

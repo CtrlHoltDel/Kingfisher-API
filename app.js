@@ -29,13 +29,14 @@ app.use(express.json());
 app.get("/", (req, res, next) => {
   res.status(200).sendFile(`${__dirname}/index.json`);
 });
+
 app.use("/auth", authRouter);
+app.use("/backup", backupRouter);
 app.use(verifyUserToken);
 
 app.use("/players", playersRouter);
 app.use("/notes", notesRouter);
 app.use("/tendencies", tendenciesRouter);
-app.use("/backup", verifyAdmin, backupRouter);
 app.use("/admin", verifyAdmin, adminRouter);
 
 app.use(customError);

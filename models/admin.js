@@ -1,3 +1,4 @@
+const { add } = require("date-fns");
 const db = require("../db/connection");
 
 exports.fetchUsers = async () => {
@@ -21,30 +22,22 @@ exports.removeUser = async ({ id }) => {
   await db.query(`DELETE FROM users WHERE user_id = $1`, [id]);
 };
 
+const getCount = async (row, dataBase) => {
+  return await db.query(`SELECT COUNT(${row}) from ${dataBase}`);
+};
+
 exports.fetchRecent = async () => {
   const { rows: notes } = await db.query(
     `SELECT * FROM notes ORDER BY n_created_at DESC LIMIT 5`
   );
-
   const { rows: tendencies } = await db.query(
     `SELECT * FROM tendencies ORDER BY t_created_at DESC LIMIT 5`
   );
 
-  const { rows: note_count } = await db.query(
-    `SELECT COUNT(note_id) :: INT FROM notes;`
-  );
-
-  const { rows: tendency_count } = await db.query(
-    `SELECT COUNT(tendency_id):: INT FROM tendencies;`
-  );
-
-  const { rows: player_count } = await db.query(
-    `SELECT COUNT(player_name) :: INT FROM players;`
-  );
-
-  const { rows: user_count } = await db.query(
-    `SELECT COUNT(user_id) :: INT FROM users;`
-  );
+  const { rows: note_count } = await getCount("note_id", "notes");
+  const { rows: tendency_count } = await getCount("tendency_id", "tendencies");
+  const { rows: player_count } = await getCount("player_name", "players");
+  const { rows: user_count } = await getCount("user_id", "users");
 
   return {
     notes,
@@ -54,4 +47,16 @@ exports.fetchRecent = async () => {
     player_count: player_count[0],
     user_count: user_count[0],
   };
+};
+
+exports.createKey = async () => {
+  const key = `${Math.random()}`.replace(".", "");
+  const expiryDate = add(new Date(), { seconds: 20 });
+
+  const { rows } = await db.query(
+    `INSERT INTO keys (key, expiry_date) VALUES ($1, $2) returning *`,
+    [key, expiryDate]
+  );
+
+  return rows[0];
 };

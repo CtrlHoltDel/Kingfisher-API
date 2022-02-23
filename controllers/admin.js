@@ -3,6 +3,7 @@ const {
   amendUser,
   removeUser,
   fetchRecent,
+  createKey,
 } = require("../models/admin");
 
 exports.getUsers = async (req, res, next) => {
@@ -19,7 +20,6 @@ exports.patchUser = async (req, res, next) => {
     const user = await amendUser(req.params, req.body);
     res.status(201).send({ user });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -37,6 +37,15 @@ exports.getRecent = async (req, res, next) => {
   try {
     const recent = await fetchRecent();
     res.status(200).send({ recent });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.generateKey = async (req, res, next) => {
+  try {
+    const key = await createKey();
+    res.send({ key });
   } catch (err) {
     next(err);
   }

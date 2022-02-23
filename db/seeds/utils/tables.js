@@ -1,7 +1,7 @@
 const db = require("../../connection");
 
 const dropTables = async () => {
-  const tables = ["notes", "tendencies", "players", "users"];
+  const tables = ["notes", "tendencies", "players", "users", "keys"];
   for (let i = 0; i < tables.length; i++) {
     await db.query(`DROP TABLE IF EXISTS ${tables[i]}`);
   }
@@ -41,10 +41,17 @@ const createTables = async () => {
       u_created_at TIMESTAMP DEFAULT NOW()
   )`;
 
+  const keys = `CREATE TABLE keys(
+    key_id SERIAL PRIMARY KEY, 
+    key VARCHAR NOT NULL,
+    expiry_date TIMESTAMP NOT NULL
+  )`;
+
   await db.query(players);
   await db.query(notes);
   await db.query(tendencies);
   await db.query(users);
+  await db.query(keys);
 };
 
 module.exports = { dropTables, createTables };
