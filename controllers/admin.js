@@ -44,7 +44,7 @@ exports.getRecent = async (req, res, next) => {
 
 exports.generateKey = async (req, res, next) => {
   try {
-    const key = await createKey();
+    const key = await createKey(req.authData.user);
     res.send({ key });
   } catch (err) {
     next(err);

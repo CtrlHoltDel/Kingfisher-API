@@ -3,14 +3,15 @@ const format = require("pg-format");
 const bcrypt = require("bcryptjs");
 
 exports.fillTables = async (data) => {
-  const { players, tendencies, notes, users } = data;
+  const { players, tendencies, notes, users, keys } = data;
 
-  if (!players || !tendencies || !notes || !users) {
+  if (!players || !tendencies || !notes || !users || !keys) {
     console.log("Missing Data");
+    return;
   }
 
   const usersQuery = format(
-    `INSERT INTO users(username, password, admin, validated, u_created_at) VALUES %L`,
+    `INSERT INTO users(username, password, admin, validated, u_created_at, total_time) VALUES %L`,
     users.map((user) => {
       return [
         user.username,
@@ -18,13 +19,9 @@ exports.fillTables = async (data) => {
         user.admin,
         user.validated,
         user.u_created_at,
+        user.total_time || 0,
       ];
     })
-  );
-
-  await db.query(
-    `INSERT INTO users (username, password, admin) VALUES ($1, $2, $3) RETURNING username, u_created_at`,
-    ["admin", await bcrypt.hash("admin", 10), true]
   );
 
   const playersQuery = format(
@@ -69,8 +66,32 @@ exports.fillTables = async (data) => {
     })
   );
 
+  const keysQuery = format(
+    `INSERT INTO keys (key, expiry_date, k_created_by) VALUES %L`,
+    keys.map((key) => {
+      return [key.key, key.expiry_date, key.k_created_by];
+    })
+  );
+
   await db.query(playersQuery);
   if (tendencies.length) await db.query(tendenciesQuery);
   if (notes.length) await db.query(notesQuery);
   if (users.length) await db.query(usersQuery);
+  if (keys.length) await db.query(keysQuery);
+
+  const { rows } = await db.query(
+    `SELECT * FROM users WHERE username = 'admin'`
+  );
+
+  if (!rows[0]) {
+    await db.query(
+      `INSERT INTO users (username, password, admin, u_created_at) VALUES ($1, $2, $3, $4) RETURNING username, u_created_at`,
+      [
+        "admin",
+        await bcrypt.hash("admin", 10),
+        true,
+        "2000-01-01T09:56:54.244Z",
+      ]
+    );
+  }
 };

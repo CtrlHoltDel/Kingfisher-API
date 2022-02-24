@@ -1,7 +1,7 @@
 const db = require("../../connection");
 
 const dropTables = async () => {
-  const tables = ["notes", "tendencies", "players", "users", "keys"];
+  const tables = ["notes", "tendencies", "players", "keys", "users"];
   for (let i = 0; i < tables.length; i++) {
     await db.query(`DROP TABLE IF EXISTS ${tables[i]}`);
   }
@@ -34,17 +34,19 @@ const createTables = async () => {
 
   const users = `CREATE TABLE users(
       user_id SERIAL PRIMARY KEY,
-      username VARCHAR NOT NULL, 
+      username VARCHAR NOT NULL UNIQUE, 
       password VARCHAR NOT NULL,
       admin BOOLEAN DEFAULT FALSE,
       validated BOOLEAN DEFAULT TRUE,
-      u_created_at TIMESTAMP DEFAULT NOW()
+      u_created_at TIMESTAMP DEFAULT NOW(),
+      total_time INT DEFAULT 0
   )`;
 
   const keys = `CREATE TABLE keys(
     key_id SERIAL PRIMARY KEY, 
     key VARCHAR NOT NULL,
-    expiry_date TIMESTAMP NOT NULL
+    expiry_date TIMESTAMP NOT NULL, 
+    k_created_by VARCHAR NOT NULL REFERENCES users(username)
   )`;
 
   await db.query(players);

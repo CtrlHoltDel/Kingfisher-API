@@ -21,10 +21,32 @@ const passport = require("passport");
 require("./strategies/local");
 
 const app = express();
+const server = require("http").Server(app);
 
 app.use(cors());
 app.use(passport.initialize());
 app.use(express.json());
+
+const io = require("socket.io")(server, { cors: { origin: "*" } });
+
+const { incrimentOnlineTime } = require("./models/socket");
+
+io.on("connection", (socket) => {
+  let startingTime;
+  let user;
+
+  socket.on("login", (currUser) => {
+    console.log(`${currUser} has logged in`);
+    startingTime = Date.now();
+    user = currUser;
+  });
+
+  socket.on("disconnect", async () => {
+    console.log(`${user} has logged out`);
+    const totalTime = Date.now() - startingTime;
+    await incrimentOnlineTime(user, totalTime);
+  });
+});
 
 app.get("/", (req, res, next) => {
   res.status(200).sendFile(`${__dirname}/endpoints.json`);
@@ -32,14 +54,16 @@ app.get("/", (req, res, next) => {
 
 app.use("/auth", authRouter);
 app.use("/backup", backupRouter);
+
 app.use(verifyUserToken);
 
 app.use("/players", playersRouter);
 app.use("/notes", notesRouter);
 app.use("/tendencies", tendenciesRouter);
+
 app.use("/admin", verifyAdmin, adminRouter);
 
 app.use(customError);
 app.use(serverError);
 
-module.exports = app;
+module.exports = server;
