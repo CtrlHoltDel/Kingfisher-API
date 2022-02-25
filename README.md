@@ -2,6 +2,8 @@
 
 A REST API created using [Node](https://nodejs.org/en/) and [express.js](https://expressjs.com/). Using [PSQL](https://www.postgresql.org/) for data persistance and jsonwebtokens and [bcrypt](https://bcrypt.online/) to handle user authorisation.
 
+Uses websockets with Socket.io to give instance updates and feedback across multiple clients and keep track of how long users are logged into the application.
+
 ## Description
 
 A note taking API for card games that allows a user to create players and relate various points of information to those players.

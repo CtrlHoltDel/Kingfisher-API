@@ -34,7 +34,7 @@ exports.postPlayer = async (req, res, next) => {
 
 exports.patchType = async (req, res, next) => {
   try {
-    const player = await amendType(req.params, req.body);
+    const player = await amendType(req.params, req.body, req.io);
     res.status(201).send(player);
   } catch (err) {
     next(err);

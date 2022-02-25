@@ -71,7 +71,7 @@ exports.insertPlayer = async (
   return { player };
 };
 
-exports.amendType = async ({ player }, { type }) => {
+exports.amendType = async ({ player }, { type }, io) => {
   if (await checkPlayer(player))
     return Promise.reject({ status: 404, message: "Non-existent user" });
 
@@ -84,6 +84,8 @@ exports.amendType = async ({ player }, { type }) => {
   const query = `UPDATE players SET type = $1 WHERE player_name = $2 RETURNING *`;
 
   const { rows } = await db.query(query, [type, player]);
+
+  io.emit("update-type", player, type);
 
   return { player: rows[0] };
 };

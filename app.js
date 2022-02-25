@@ -31,6 +31,11 @@ const io = require("socket.io")(server, { cors: { origin: "*" } });
 
 const { incrimentOnlineTime } = require("./models/socket");
 
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
 io.on("connection", (socket) => {
   let startingTime;
   let user;
