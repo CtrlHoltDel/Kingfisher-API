@@ -34,6 +34,7 @@ app.use(express.json());
 const io = require("socket.io")(server, { cors: { origin: "*" } });
 
 const { incrimentOnlineTime } = require("./models/socket");
+const db = require("./db/connection");
 
 app.use((req, res, next) => {
   req.io = io;
@@ -48,12 +49,23 @@ io.on("connection", (socket) => {
     console.log(`${currUser} has logged in`);
     startingTime = Date.now();
     user = currUser;
+
+    db.query(`INSERT INTO logs (method, username) VALUES ($1, $2)`, [
+      "LOGIN",
+      user,
+    ]);
+
+    console.log("test");
   });
 
   socket.on("disconnect", async () => {
     if (!user) return;
     console.log(`${user} has logged out`);
     const totalTime = Date.now() - startingTime;
+    await db.query(`INSERT INTO logs (method, username) VALUES ($1, $2)`, [
+      "LOGOUT",
+      user,
+    ]);
     await incrimentOnlineTime(user, totalTime);
   });
 });

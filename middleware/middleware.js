@@ -46,42 +46,66 @@ exports.verifyAdmin = (req, res, next) => {
   next();
 };
 
+const insertLog = (method, username, message, player) => {
+  db.query(
+    `INSERT INTO logs(method, username, message, player) VALUES ($1, $2, $3, $4)`,
+    [method, username, message, player]
+  );
+};
+
 exports.logger = (req, res, next) => {
   const { username } = req.authData.user;
 
-  if (req.method === "GET" && !(req.url.slice(0, 9) === "/players?")) {
+  if (
+    req.method === "GET" &&
+    !(req.url.slice(0, 9) === "/players?") &&
+    !(req.url === "/admin/generateKey")
+  ) {
+    console.log(req.url);
     const player = req.url.slice(9);
-    console.log(`${username} looked up ${player}`);
+    insertLog(req.method, username, `${username} looked up ${player}`, player);
   }
 
   if (req.method === "POST") {
-    if (req.body.player_name)
-      console.log(`${username} added ${req.body.player_name}`);
+    let message = "";
+    let player = null;
 
-    if (req.body.tendency)
-      console.log(
-        `${username} added the tendency ${req.body.tendency} to ${req.url.slice(
-          12
-        )}`
-      );
+    if (req.body.note) {
+      player = req.url.slice(7);
+      message = `${username} added the note ${req.body.note} to ${player}`;
+    } else if (req.body.tendency) {
+      player = req.url.slice(12);
+      message = `${username} added the tendency ${req.body.tendency} to ${player}`;
+    } else if (req.body.player_name) {
+      player = req.body.player_name;
+      message = `${username} added ${player}`;
+    } else {
+      message = "unknown";
+    }
 
-    if (req.body.note)
-      console.log(
-        `${username} added the note ${req.body.note} to ${req.url.slice(7)}`
-      );
+    insertLog(req.method, username, message, player);
   }
 
   if (req.method === "DELETE") {
-    if (req.url.slice(0, 11) === "/tendencies") {
-      console.log(`${username} deleted tendency ${req.url.slice(12)}`);
-    } else {
-      console.log(`${username} deleted note ${req.url.slice(7)}`);
-    }
+    insertLog(
+      req.method,
+      username,
+      req.url.slice(0, 11) === "/tendencies"
+        ? `${username} deleted tendency ${req.url.slice(12)}`
+        : `${username} deleted note ${req.url.slice(7)}`
+    );
   }
 
   if (req.method === "PATCH") {
     const player = req.url.slice(9, -5);
-    console.log(`${username} updated ${player} to ${req.body.type}`);
+
+    insertLog(
+      req.method,
+      username,
+      `${username} updated ${player} to ${req.body.type}`,
+      "test",
+      player
+    );
   }
 
   next();

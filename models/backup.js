@@ -18,10 +18,11 @@ exports.fetchJSON = async (backupKey) => {
   const tendencies = await allItems("tendencies");
   const users = await allItems("users");
   const keys = await allItems("keys");
+  const logs = await allItems("logs");
 
   await writeFile(
     `${__dirname.slice(0, -7)}/backup/all.json`,
-    JSON.stringify({ players, notes, tendencies, users, keys })
+    JSON.stringify({ players, notes, tendencies, users, keys, logs })
   );
 };
 
