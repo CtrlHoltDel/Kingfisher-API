@@ -45,3 +45,44 @@ exports.verifyAdmin = (req, res, next) => {
   }
   next();
 };
+
+exports.logger = (req, res, next) => {
+  const { username } = req.authData.user;
+
+  if (req.method === "GET" && !(req.url.slice(0, 9) === "/players?")) {
+    const player = req.url.slice(9);
+    console.log(`${username} looked up ${player}`);
+  }
+
+  if (req.method === "POST") {
+    if (req.body.player_name)
+      console.log(`${username} added ${req.body.player_name}`);
+
+    if (req.body.tendency)
+      console.log(
+        `${username} added the tendency ${req.body.tendency} to ${req.url.slice(
+          12
+        )}`
+      );
+
+    if (req.body.note)
+      console.log(
+        `${username} added the note ${req.body.note} to ${req.url.slice(7)}`
+      );
+  }
+
+  if (req.method === "DELETE") {
+    if (req.url.slice(0, 11) === "/tendencies") {
+      console.log(`${username} deleted tendency ${req.url.slice(12)}`);
+    } else {
+      console.log(`${username} deleted note ${req.url.slice(7)}`);
+    }
+  }
+
+  if (req.method === "PATCH") {
+    const player = req.url.slice(9, -5);
+    console.log(`${username} updated ${player} to ${req.body.type}`);
+  }
+
+  next();
+};

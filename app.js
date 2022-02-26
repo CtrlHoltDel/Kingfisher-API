@@ -6,7 +6,11 @@ require("dotenv").config({
 
 const express = require("express");
 const cors = require("cors");
-const { verifyUserToken, verifyAdmin } = require("./middleware/middleware");
+const {
+  verifyUserToken,
+  verifyAdmin,
+  logger,
+} = require("./middleware/middleware");
 
 const { customError, serverError } = require("./errors/errors");
 
@@ -47,6 +51,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", async () => {
+    if (!user) return;
     console.log(`${user} has logged out`);
     const totalTime = Date.now() - startingTime;
     await incrimentOnlineTime(user, totalTime);
@@ -61,6 +66,8 @@ app.use("/auth", authRouter);
 app.use("/backup", backupRouter);
 
 app.use(verifyUserToken);
+
+app.use(logger);
 
 app.use("/players", playersRouter);
 app.use("/notes", notesRouter);
