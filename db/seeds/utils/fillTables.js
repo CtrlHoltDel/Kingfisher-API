@@ -5,7 +5,8 @@ const bcrypt = require("bcryptjs");
 exports.fillTables = async (data) => {
   const { players, tendencies, notes, users, keys, logs } = data;
 
-  if (!players || !tendencies || !notes || !users || !keys || !logs) {
+  if (!players || !tendencies || !notes || !users || !keys) {
+    console.log(data);
     console.log("Missing Data");
     return;
   }
@@ -74,19 +75,19 @@ exports.fillTables = async (data) => {
     })
   );
 
-  const logsQuery = format(
-    `INSERT INTO logs (method, username, message, time, player) VALUES %L`,
-    logs.map((log) => {
-      return [log.method, log.username, log.message, log.time, log.player];
-    })
-  );
+  // const logsQuery = format(
+  //   `INSERT INTO logs (method, username, message, time, player) VALUES %L`,
+  //   logs.map((log) => {
+  //     return [log.method, log.username, log.message, log.time, log.player];
+  //   })
+  // );
 
   await db.query(playersQuery);
   if (tendencies.length) await db.query(tendenciesQuery);
   if (notes.length) await db.query(notesQuery);
   if (users.length) await db.query(usersQuery);
   if (keys.length) await db.query(keysQuery);
-  if (logs.length) await db.query(logsQuery);
+  // if (logs.length) await db.query(logsQuery);
 
   const { rows } = await db.query(
     `SELECT * FROM users WHERE username = 'admin'`

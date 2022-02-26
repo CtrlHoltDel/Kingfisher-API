@@ -49,21 +49,21 @@ const createTables = async () => {
     k_created_by VARCHAR NOT NULL REFERENCES users(username)
   )`;
 
-  const logs = `CREATE TABLE logs(
-    log_id SERIAL PRIMARY KEY, 
-    method VARCHAR NOT NULL, 
-    username VARCHAR NOT NULL,
-    message VARCHAR, 
-    time TIMESTAMP DEFAULT NOW(),
-    player VARCHAR
-  )`;
+  // const logs = `CREATE TABLE logs(
+  //   log_id SERIAL PRIMARY KEY,
+  //   method VARCHAR NOT NULL,
+  //   username VARCHAR NOT NULL,
+  //   message VARCHAR,
+  //   time TIMESTAMP DEFAULT NOW(),
+  //   player VARCHAR
+  // )`;
 
   await db.query(players);
   await db.query(notes);
   await db.query(tendencies);
   await db.query(users);
   await db.query(keys);
-  await db.query(logs);
+  // await db.query(logs);
 };
 
 module.exports = { dropTables, createTables };
