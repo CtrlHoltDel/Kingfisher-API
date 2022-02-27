@@ -34,7 +34,6 @@ app.use(express.json());
 const io = require("socket.io")(server, { cors: { origin: "*" } });
 
 const { incrimentOnlineTime } = require("./models/socket");
-const db = require("./db/connection");
 
 app.use((req, res, next) => {
   req.io = io;
@@ -67,8 +66,6 @@ app.use("/auth", authRouter);
 app.use("/backup", backupRouter);
 
 app.use(verifyUserToken);
-
-app.use(logger);
 
 app.use("/players", playersRouter);
 app.use("/notes", notesRouter);
