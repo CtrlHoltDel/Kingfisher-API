@@ -49,23 +49,12 @@ io.on("connection", (socket) => {
     console.log(`${currUser} has logged in`);
     startingTime = Date.now();
     user = currUser;
-
-    db.query(`INSERT INTO logs (method, username) VALUES ($1, $2)`, [
-      "LOGIN",
-      user,
-    ]);
-
-    console.log("test");
   });
 
   socket.on("disconnect", async () => {
     if (!user) return;
     console.log(`${user} has logged out`);
     const totalTime = Date.now() - startingTime;
-    await db.query(`INSERT INTO logs (method, username) VALUES ($1, $2)`, [
-      "LOGOUT",
-      user,
-    ]);
     await incrimentOnlineTime(user, totalTime);
   });
 });
