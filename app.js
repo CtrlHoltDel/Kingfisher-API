@@ -48,13 +48,13 @@ io.on("connection", (socket) => {
   socket.on("login", (currUser) => {
     console.log(`${currUser} has logged in`);
     startingTime = Date.now();
-    // io.emit("live-message", currUser, null, `connection`, Date.now());
+    io.emit("live-message", currUser, null, `connection`, Date.now());
     user = currUser;
   });
 
   socket.on("disconnect", async () => {
     if (!user) return;
-    // io.emit("live-message", user, null, `disconnection`, Date.now());
+    io.emit("live-message", user, null, `disconnection`, Date.now());
     const totalTime = Date.now() - startingTime;
     await incrimentOnlineTime(user, totalTime);
   });

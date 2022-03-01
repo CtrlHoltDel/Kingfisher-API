@@ -11,7 +11,7 @@ exports.fillTables = async (data) => {
   }
 
   const usersQuery = format(
-    `INSERT INTO users(username, password, admin, validated, u_created_at, total_time) VALUES %L`,
+    `INSERT INTO users(username, password, admin, validated, u_created_at, total_time, last_seen) VALUES %L`,
     users.map((user) => {
       return [
         user.username,
@@ -20,6 +20,7 @@ exports.fillTables = async (data) => {
         user.validated,
         user.u_created_at,
         user.total_time || 0,
+        user.last_seen || new Date(1642502115903),
       ];
     })
   );
