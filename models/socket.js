@@ -13,11 +13,12 @@ exports.incrimentOnlineTime = async (username, amount) => {
       [amount, username]
     );
 
-    await db.query(`UPDATE users SET last_seen = $1 WHERE username = $2;`, [
-      new Date(),
-      username,
-    ]);
+    // await db.query(`UPDATE users SET last_seen = $1 WHERE username = $2;`, [
+    //   new Date(),
+    //   username,
+    // ]);
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
