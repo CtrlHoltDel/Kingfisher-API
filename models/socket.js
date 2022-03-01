@@ -16,6 +16,4 @@ exports.incrimentOnlineTime = async (username, amount) => {
   //   `UPDATE users SET last_seen = $1 WHERE username = $2;`,
   //   [new Date(), username]
   // );
-
-  console.log(rows);
 };
