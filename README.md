@@ -1,6 +1,6 @@
 # Kingfisher. A card game - note taking API.
 
-A REST API created using [Node](https://nodejs.org/en/) and [express.js](https://expressjs.com/). Using [PSQL](https://www.postgresql.org/) for data persistance and jsonwebtokens and [bcrypt](https://bcrypt.online/) to handle user authorisation.
+A REST API created using [Node](https://nodejs.org/en/) and [express.js](https://expressjs.com/). Using [PSQL](https://www.postgresql.org/) for data persistance and jsonwebtokens and [bcrypt](https://bcrypt.online/) to handle user authorisation. Uses Socket.io to give connected clients instant feedback.
 
 Uses websockets with Socket.io to give instance updates and feedback across multiple clients and keep track of how long users are logged into the application.
 
@@ -61,6 +61,7 @@ Initially you will only be able to access the `/` endpoint. Sending a post reque
 | ------------------------------------ | -------------------------------------------------------- |
 | [Node](https://nodejs.org/en/)       | Non-browser Javascript runtime the server is built upon. |
 | [express.js](https://expressjs.com/) | HTTP web application framework.                          |
+| [Socket.io](https://socket.io/)      | Bidirectional realtime communication library             |
 
 | Database                                                  | Description                                         |
 | --------------------------------------------------------- | --------------------------------------------------- |

@@ -39,7 +39,8 @@ const createTables = async () => {
       admin BOOLEAN DEFAULT FALSE,
       validated BOOLEAN DEFAULT TRUE,
       u_created_at TIMESTAMP DEFAULT NOW(),
-      total_time INT DEFAULT 0
+      total_time INT DEFAULT 0,
+      last_seen TIMESTAMP
   )`;
 
   const keys = `CREATE TABLE keys(

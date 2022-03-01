@@ -10,6 +10,7 @@ const {
   verifyUserToken,
   verifyAdmin,
   logger,
+  liveLog,
 } = require("./middleware/middleware");
 
 const { customError, serverError } = require("./errors/errors");
@@ -47,12 +48,13 @@ io.on("connection", (socket) => {
   socket.on("login", (currUser) => {
     console.log(`${currUser} has logged in`);
     startingTime = Date.now();
+    io.emit("live-message", currUser, null, `connection`, Date.now());
     user = currUser;
   });
 
   socket.on("disconnect", async () => {
     if (!user) return;
-    console.log(`${user} has logged out`);
+    io.emit("live-message", user, null, `disconnection`, Date.now());
     const totalTime = Date.now() - startingTime;
     await incrimentOnlineTime(user, totalTime);
   });
@@ -66,6 +68,7 @@ app.use("/auth", authRouter);
 app.use("/backup", backupRouter);
 
 app.use(verifyUserToken);
+app.use(liveLog);
 
 app.use("/players", playersRouter);
 app.use("/notes", notesRouter);
