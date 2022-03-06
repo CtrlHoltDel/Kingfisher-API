@@ -2,7 +2,7 @@
 
 A REST API created using [Node](https://nodejs.org/en/) and [express.js](https://expressjs.com/). Using [PSQL](https://www.postgresql.org/) for data persistance and jsonwebtokens and [bcrypt](https://bcrypt.online/) to handle user authorisation. Uses Socket.io to give connected clients instant feedback.
 
-Uses websockets with Socket.io to give instance updates and feedback across multiple clients and keep track of how long users are logged into the application.
+Uses websockets with Socket.io to give instant updates and feedback across multiple clients and gives real time feedback in the admin panel of users actions.
 
 ## Description
 
