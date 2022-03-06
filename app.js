@@ -9,7 +9,6 @@ const cors = require("cors");
 const {
   verifyUserToken,
   verifyAdmin,
-  logger,
   liveLog,
 } = require("./middleware/middleware");
 
@@ -34,29 +33,22 @@ app.use(express.json());
 
 const io = require("socket.io")(server, { cors: { origin: "*" } });
 
-const { incrimentOnlineTime } = require("./models/socket");
-
 app.use((req, res, next) => {
   req.io = io;
   next();
 });
 
 io.on("connection", (socket) => {
-  let startingTime;
   let user;
 
   socket.on("login", (currUser) => {
-    console.log(`${currUser} has logged in`);
-    startingTime = Date.now();
-    io.emit("live-message", currUser, null, `connection`, Date.now());
     user = currUser;
+    io.emit("live-message", currUser, null, `connection`, Date.now());
   });
 
   socket.on("disconnect", async () => {
     if (!user) return;
-    io.emit("live-message", user, null, `disconnection`, Date.now());
-    const totalTime = Date.now() - startingTime;
-    await incrimentOnlineTime(user, totalTime);
+    io.emit("live-message", user, null, `disconnect`, Date.now());
   });
 });
 
@@ -68,7 +60,7 @@ app.use("/auth", authRouter);
 app.use("/backup", backupRouter);
 
 app.use(verifyUserToken);
-// app.use(liveLog);
+app.use(liveLog);
 
 app.use("/players", playersRouter);
 app.use("/notes", notesRouter);

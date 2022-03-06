@@ -59,6 +59,7 @@ exports.liveLog = (req, res, next) => {
     let player = null;
     let user = req.authData.user.username;
     let body = null;
+
     if (req.method === "POST") {
       const [, currType, currPlayer] = req.url.split("/");
       if (currType === "players") {
@@ -78,13 +79,13 @@ exports.liveLog = (req, res, next) => {
       let [, , id] = req.url.split("/");
       type = `del ${req.url.slice(1, 2)}`;
       body = id;
-      console.log(req.url);
     }
     if (req.method === "PATCH") {
       player = req.url.split("/")[2];
       body = req.body.type;
       type = `patch-type`;
     }
+
     req.io.emit("live-message", user, player, type, new Date(), body);
   }
   next();
