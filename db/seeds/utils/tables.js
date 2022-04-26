@@ -37,7 +37,7 @@ const createTables = async () => {
       username VARCHAR NOT NULL UNIQUE, 
       password VARCHAR NOT NULL,
       admin BOOLEAN DEFAULT FALSE,
-      validated BOOLEAN DEFAULT TRUE,
+      validated BOOLEAN DEFAULT FALSE,
       u_created_at TIMESTAMP DEFAULT NOW(),
       last_seen TIMESTAMP
   )`;
