@@ -11,15 +11,14 @@ exports.fillTables = async (data) => {
   }
 
   const usersQuery = format(
-    `INSERT INTO users(username, password, admin, validated, u_created_at, last_seen) VALUES %L`,
+    `INSERT INTO users(username, password, admin, validated, u_created_at) VALUES %L`,
     users.map((user) => {
       return [
         user.username,
         user.password,
         user.admin,
         user.validated,
-        user.u_created_at,
-        user.last_seen || new Date(1642502115903),
+        user.u_created_at
       ];
     })
   );
@@ -81,18 +80,21 @@ exports.fillTables = async (data) => {
   if (keys.length) await db.query(keysQuery);
 
   const { rows } = await db.query(
-    `SELECT * FROM users WHERE username = 'admin'`
+    `SELECT * FROM users WHERE username = '${process.env.ADMIN_USER}'`
   );
 
   if (!rows[0]) {
+    console.log("Generating admin account")
     await db.query(
-      `INSERT INTO users (username, password, admin, u_created_at) VALUES ($1, $2, $3, $4) RETURNING username, u_created_at`,
+      `INSERT INTO users (username, password, admin, validated, u_created_at) VALUES ($1, $2, $3, $4, $5) RETURNING username, u_created_at`,
       [
-        "admin",
-        await bcrypt.hash("admin", 10),
+        process.env.ADMIN_USER,
+        await bcrypt.hash(process.env.ADMIN_PASSWORD, 10),
         true,
+        true, 
         "2000-01-01T09:56:54.244Z",
       ]
     );
+
   }
 };
