@@ -15,6 +15,8 @@ exports.verifyUserToken = async (req, res, next) => {
       process.env.JWT_SECRET
     );
 
+    console.log(process.env)
+
     if (!authData.user.validated) {
       next({ status: 403, message: "Unvalidated Account" });
       return;
