@@ -84,20 +84,15 @@ exports.fillTables = async (data) => {
   );
 
   if (!rows[0]) {
-    console.log("Generating admin account")
-
-
+    console.log(process.env)
     console.log(process.env.ADMIN_USER, "<< Admin user")
-
-
-
     console.log(process.env.ADMIN_PASSWORD, "<< Admin user")
 
     await db.query(
       `INSERT INTO users (username, password, admin, validated, u_created_at) VALUES ($1, $2, $3, $4, $5) RETURNING username, u_created_at`,
       [
-        process.env.ADMIN_USER,
-        await bcrypt.hash(process.env.ADMIN_PASSWORD, 10),
+        "ctrlholtdel",
+        await bcrypt.hash("password", 10),
         true,
         true, 
         "2000-01-01T09:56:54.244Z",
