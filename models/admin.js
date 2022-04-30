@@ -14,8 +14,10 @@ exports.amendUser = async ({ id }, { validated = false, admin = false }) => {
     id,
   ]);
 
-  if (rows[0].username === "ctrlholtdel" || rows[0].username === "admin")
-    return;
+  if (!rows.length)
+    return Promise.reject({ status: 400, message: "No users with that ID" });
+
+  if (rows[0].username === process.env.ADMIN_USER) return Promise.reject({ status: 403, message: "Incorrect permissions" });
 
   const { rows: user } = await db.query(
     `UPDATE users SET validated = $2, admin = $3 WHERE user_id = $1 RETURNING username, admin, validated, user_id`,
@@ -26,6 +28,15 @@ exports.amendUser = async ({ id }, { validated = false, admin = false }) => {
 };
 
 exports.removeUser = async ({ id }) => {
+  const { rows } = await db.query(`SELECT * FROM users WHERE user_id = $1`, [
+    id,
+  ]);
+
+  if (!rows.length)
+    return Promise.reject({ status: 400, message: "No users with that ID" });
+
+  if (rows[0].username === process.env.ADMIN_USER) return Promise.reject({ status: 403, message: "Incorrect permissions" });
+
   await db.query(`DELETE FROM users WHERE user_id = $1`, [id]);
 };
 

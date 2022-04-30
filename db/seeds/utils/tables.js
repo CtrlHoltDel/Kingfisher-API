@@ -38,15 +38,14 @@ const createTables = async () => {
       password VARCHAR NOT NULL,
       admin BOOLEAN DEFAULT FALSE,
       validated BOOLEAN DEFAULT FALSE,
-      u_created_at TIMESTAMP DEFAULT NOW(),
-      last_seen TIMESTAMP
+      u_created_at TIMESTAMP DEFAULT NOW()
   )`;
 
   const keys = `CREATE TABLE keys(
     key_id SERIAL PRIMARY KEY, 
     key VARCHAR NOT NULL,
     expiry_date TIMESTAMP NOT NULL, 
-    k_created_by VARCHAR NOT NULL REFERENCES users(username)
+    k_created_by VARCHAR NOT NULL
   )`;
 
   await db.query(players);
