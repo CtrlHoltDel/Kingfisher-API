@@ -2,6 +2,11 @@ const bcrypt = require("bcryptjs");
 const db = require("../db/connection");
 
 exports.handleRegister = async (username, password) => {
+
+  if(!username || !password){
+    return Promise.reject({ status: 400, error: "Missing username or password" })
+  }
+
   const { rows: userCheck } = await db.query(
     `SELECT * FROM users WHERE username = $1`,
     [username]
